@@ -1,0 +1,45 @@
+<resources>
+
+    <!--
+        Base application theme for API 14+. This theme completely replaces
+        AppBaseTheme from BOTH res/values/styles.xml and
+        res/values-v11/styles.xml on API 14+ devices.
+    -->
+    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- API 14 theme customizations can go here. -->
+        <item name="actionBarTabStyle">@style/ActionBarTabStyle</item>
+        <item name="actionBarStyle">@style/ActionBarSolid</item>
+        <item name="actionModeCloseButtonStyle">@style/ActionButtonCloseMode</item>
+        <item name="actionBarItemBackground">@drawable/selectable_background_ejemplo</item>
+        <item name="actionModeBackground">@drawable/cab_background_top_ejemplo</item>
+        <item name="actionModeSplitBackground">@drawable/cab_background_bottom_ejemplo</item>
+    </style>
+
+   
+   <style name="ThemePersonalizado" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="actionBarTabStyle">@style/ActionBarTabStyle</item>
+        <item name="actionBarStyle">@style/ActionBarSolid</item>
+        <item name="actionModeCloseButtonStyle">@style/ActionButtonCloseMode</item>
+        <item name="actionBarItemBackground">@drawable/selectable_background_ejemplo</item>
+        <item name="actionModeBackground">@drawable/cab_background_top_ejemplo</item>
+        <item name="actionModeSplitBackground">@drawable/cab_background_bottom_ejemplo</item>
+    </style>
+
+    <style name="ActionBarSolid" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@drawable/ab_solid_ejemplo</item>
+        <item name="backgroundStacked">@drawable/ab_stacked_solid_ejemplo</item>
+        <item name="backgroundSplit">@drawable/ab_bottom_solid_ejemplo</item>
+    </style>
+
+    <style name="ActionBarTabStyle" parent="@style/Widget.AppCompat.ActionBar.TabView">
+        <item name="android:background">@drawable/tab_indicator_ab_ejemplo</item>
+    </style>
+    
+    <style name="ActionButtonCloseMode" parent="@style/Widget.AppCompat.ActionButton.CloseMode">
+        <item name="android:background">@drawable/btn_cab_done_ejemplo</item>
+    </style>
+    
+    <color name="pressed_example">#CCFFBB33</color>
+    
+    
+</resources>
