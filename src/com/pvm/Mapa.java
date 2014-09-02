@@ -4,11 +4,13 @@ package com.pvm;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,6 +45,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -51,6 +55,9 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class Mapa extends Fragment
 {
+	private RadioGroup rgDesplegarRB;
+    private RadioButton radioMotrarNegocios; 
+	
 	boolean preferenciasGuardadas;
 
 	
@@ -70,8 +77,10 @@ public class Mapa extends Fragment
 	
 	/// Variables busqueda avanzada
 	private static int Distancia;
-	private static int Precio;
+	private static int Precio;	
+	private static boolean DesplegarDatos;
 	private static String idTipoNegocio;
+
 	
 	// URL to get contacts JSON
 	private static String url = "http://paqueteubiquen.esy.es/json.json";
@@ -222,6 +231,15 @@ public class Mapa extends Fragment
     	sbDistancia = (SeekBar) getActivity().findViewById(R.id.sbDistancia);
 	    SharedPreferences prefs = getActivity().getBaseContext().getSharedPreferences("preferenciasMiApp", getActivity().getBaseContext().MODE_PRIVATE);
 	    SharedPreferences.Editor editor = prefs.edit();
+		rgDesplegarRB = (RadioGroup) getActivity().findViewById(R.id.rgDesplegarRB);
+		if(rgDesplegarRB.getCheckedRadioButtonId() ==R.id.rbLista)
+		{
+			editor.putString("DespliegueResultados", "Lista");
+		}
+		if(rgDesplegarRB.getCheckedRadioButtonId() ==R.id.rbMapa)
+		{
+			editor.putString("DespliegueResultados", "Mapa");
+		}
 	    editor.putBoolean("preferenciasGuardadas", true);
 	    editor.putString("Distancia", Integer.toString(sbDistancia.getProgress()));
 	    editor.putString("Precio", Integer.toString(sbPrecios.getProgress()));      
@@ -236,10 +254,25 @@ public class Mapa extends Fragment
       SharedPreferences prefs = getActivity().getBaseContext().getSharedPreferences("preferenciasMiApp", getActivity().getBaseContext().MODE_PRIVATE);
       Distancia = Integer.parseInt(prefs.getString("Distancia", "-1"));
       Precio = Integer.parseInt(prefs.getString("Precio", "-1"));
+      DesplegarDatos = prefs.getBoolean("DespliegueResultados", false);
       preferenciasGuardadas = prefs.getBoolean("preferenciasGuardadas", false);
       
     }
-///////////////////////////////////////////////
+	public static double getDistance(double lat_a,double lng_a, double lat_b, double lon_b)
+	{
+		  int Radius = 6371000; //Radio de la tierra
+		  double lat1 = lat_a ;
+		  double lat2 = lat_b ;
+		  double lon1 = lng_a ;
+		  double lon2 = lon_b ;
+		  double dLat = Math.toRadians(lat2-lat1);
+		  double dLon = Math.toRadians(lon2-lon1);
+		  double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon /2) * Math.sin(dLon/2);
+		  double c = 2 * Math.asin(Math.sqrt(a));
+		  return (double) (Radius * c);  
+
+	}
+	///////////////////////////////////////////////
     private void animar(boolean mostrar)
     {
         AnimationSet set = new AnimationSet(true);
@@ -331,12 +364,12 @@ public class Mapa extends Fragment
 					if(progresValue>=0 && progresValue<=10)
 						tvDistancia.setText("Cerca");
 					if(progresValue>10 && progresValue<=20)
-						tvDistancia.setText("No tan ejos");
+						tvDistancia.setText("No tan lejos");
 					if(progresValue>20 && progresValue<=30)
 						tvDistancia.setText("Lejos");
 					if(progresValue>30 && progresValue<=40)
 						tvDistancia.setText("Muy lejos");
-
+					
 				}
 				@Override
 				public void onStartTrackingTouch(SeekBar seekBar) {			}
@@ -357,7 +390,6 @@ public class Mapa extends Fragment
 					}
 					else
 						tvPrecios.setText("$"+Integer.toString(progresValue));
-
 				}
 
 				@Override
@@ -367,21 +399,23 @@ public class Mapa extends Fragment
 				public void onStopTrackingTouch(SeekBar seekBar) {}
 			});
 			/////////////////////////////////////////////////////////////////////
-	    
-	     ////// OnCick Marketer ///////////////////
-	        googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {
-	            public boolean onMarkerClick(Marker marker) 
-	            {
-	                Toast.makeText(
-	                    getActivity(),
-	                    "Latitud:\n" +
-	                    marker.getPosition().latitude+
-	                    "\nLongitud:\n"+marker.getPosition().longitude,
-	                    Toast.LENGTH_SHORT).show();
-	         
-	                return false;
-	            }
-	        });
+	     ////// OnCick Marketer /////////////////// 
+			if(googleMap!=null)
+			{
+		        googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+		            public boolean onMarkerClick(Marker marker) 
+		            {
+		                Toast.makeText(
+		                    getActivity(),
+		                    "Latitud:\n" +
+		                    marker.getPosition().latitude+
+		                    "\nLongitud:\n"+marker.getPosition().longitude,
+		                    Toast.LENGTH_SHORT).show();
+		         
+		                return false;
+		            }
+		        });
+			}
 		//////////////////////////////////////////
 	}
 

@@ -21,8 +21,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.LayoutAnimationController;
 import android.view.animation.TranslateAnimation;
-import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -34,6 +35,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 	private TextView tvPrecios;
 	private SeekBar sbDistancia;
 	private TextView tvDistancia;
+	 private RadioButton radioMapa;
+	 private RadioButton radioLista;
 	LinearLayout llc ;
 	LinearLayout llba ;
 	LinearLayout mapall ;
@@ -207,7 +210,6 @@ llc.startAnimation(animation);
 		SharedPreferences prefs = getSharedPreferences("preferenciasMiApp", Context.MODE_PRIVATE);
         
 		sbDistancia.setProgress(Integer.parseInt(prefs.getString("Distancia", "0")));
-		sbPrecios.setProgress(Integer.parseInt(prefs.getString("Precio", "0")));
 		if(sbDistancia.getProgress()>=0 && sbDistancia.getProgress()<=10)
 			tvDistancia.setText("Cerca");
 		if(sbDistancia.getProgress()>10 && sbDistancia.getProgress()<=20)
@@ -216,7 +218,28 @@ llc.startAnimation(animation);
 			tvDistancia.setText("Lejos");
 		if(sbDistancia.getProgress()>30 && sbDistancia.getProgress()<=40)
 			tvDistancia.setText("Muy lejos");
-        tvPrecios.setText("$"+prefs.getString("Precio", "0"));
+        
+        
+        sbPrecios.setProgress(Integer.parseInt(prefs.getString("Precio", "0")));
+        if( sbPrecios.getProgress()==50)
+        	tvPrecios.setText("$"+prefs.getString("Precio", "0")+"+");
+        else
+        	tvPrecios.setText("$"+prefs.getString("Precio", "0"));
+        
+    	radioMapa = (RadioButton)findViewById(R.id.rbMapa);
+    	radioLista = (RadioButton)findViewById(R.id.rbLista);
+    	String d = prefs.getString("DespliegueResultados", "");
+        if(d.equals("Mapa"))
+        {
+        	radioMapa.setChecked(true);
+        	radioLista.setChecked(false);
+        }
+        if(d.equals("Lista"))
+        {
+        	radioMapa.setChecked(false);
+        	radioLista.setChecked(true);
+        }
+        
         prefs.getBoolean("preferenciasGuardadas", false);
       
     }

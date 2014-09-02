@@ -15,10 +15,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class AcercaDe extends Fragment 
 {
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) 
 	{
@@ -55,14 +57,18 @@ public class AcercaDe extends Fragment
 		        public void onClick(View arg0) 
 		        {
 		        	Activity s = getActivity();
+		        	EditText tvComentarios = (EditText) s.findViewById(R.id.et_comentario);
 		    		LinearLayout registro = (LinearLayout) s.findViewById(R.id.layout_unete);
 		    		LinearLayout comentarios = (LinearLayout) s.findViewById(R.id.layout_comentarios);
 		    		LinearLayout opcacercade = (LinearLayout) s.findViewById(R.id.opciones_acercade);
 		    		LinearLayout opcacercade2 = (LinearLayout) s.findViewById(R.id.opciones_acercade2);
+		    		tvComentarios.setText("");
+
 		    		registro.setVisibility(View.VISIBLE);
 		    		comentarios.setVisibility(View.GONE);
 		    		opcacercade.setVisibility(View.GONE);
 		    		opcacercade2.setVisibility(View.GONE);
+		    		
 		        }
 		 
 		    });
@@ -71,10 +77,16 @@ public class AcercaDe extends Fragment
 		        public void onClick(View arg0) 
 		        {
 		        	Activity s = getActivity();
+		        	EditText tvNombre= (EditText) s.findViewById(R.id.etnomlReg);
+		        	EditText tvDireccion= (EditText) s.findViewById(R.id.etdirReg);
+		        	EditText tvTelefono= (EditText) s.findViewById(R.id.ettelReg);
 		    		LinearLayout registro = (LinearLayout) s.findViewById(R.id.layout_unete);
 		    		LinearLayout comentarios = (LinearLayout) s.findViewById(R.id.layout_comentarios);
 		    		LinearLayout opcacercade = (LinearLayout) s.findViewById(R.id.opciones_acercade);
 		    		LinearLayout opcacercade2 = (LinearLayout) s.findViewById(R.id.opciones_acercade2);
+		    		tvNombre.setText("");
+		    		tvDireccion.setText("");
+		    		tvTelefono.setText("");
 		    		registro.setVisibility(View.GONE);
 		    		comentarios.setVisibility(View.VISIBLE);
 		    		opcacercade.setVisibility(View.GONE);
