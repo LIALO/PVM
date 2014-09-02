@@ -55,6 +55,8 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class Mapa extends Fragment
 {
+	BusquedaAvanzada ba;
+	
 	private RadioGroup rgDesplegarRB;
     private RadioButton radioMotrarNegocios; 
 	
@@ -78,7 +80,7 @@ public class Mapa extends Fragment
 	/// Variables busqueda avanzada
 	private static int Distancia;
 	private static int Precio;	
-	private static boolean DesplegarDatos;
+	private static String DesplegarDatos;
 	private static String idTipoNegocio;
 
 	
@@ -96,7 +98,7 @@ public class Mapa extends Fragment
     public static GoogleMap googleMap;
     public static SupportMapFragment myMAPF;
     Marker markerPrincipal;
-    double latitude, longitude;
+    private static double latitude, longitude;
     GPSTracker gps;
     ///////////////////////////////////////
     //////////////varialbes list view/////
@@ -252,48 +254,14 @@ public class Mapa extends Fragment
     public void cargarPreferencias()
     {     
       SharedPreferences prefs = getActivity().getBaseContext().getSharedPreferences("preferenciasMiApp", getActivity().getBaseContext().MODE_PRIVATE);
-      Distancia = Integer.parseInt(prefs.getString("Distancia", "-1"));
-      Precio = Integer.parseInt(prefs.getString("Precio", "-1"));
-      DesplegarDatos = prefs.getBoolean("DespliegueResultados", false);
+      Distancia = Integer.parseInt(prefs.getString("Distancia", "0"));
+      Precio = Integer.parseInt(prefs.getString("Precio", "0"));
+      DesplegarDatos = prefs.getString("DespliegueResultados", "Mapa");
       preferenciasGuardadas = prefs.getBoolean("preferenciasGuardadas", false);
       
     }
-	public static double getDistance(double lat_a,double lng_a, double lat_b, double lon_b)
-	{
-		  int Radius = 6371000; //Radio de la tierra
-		  double lat1 = lat_a ;
-		  double lat2 = lat_b ;
-		  double lon1 = lng_a ;
-		  double lon2 = lon_b ;
-		  double dLat = Math.toRadians(lat2-lat1);
-		  double dLon = Math.toRadians(lon2-lon1);
-		  double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon /2) * Math.sin(dLon/2);
-		  double c = 2 * Math.asin(Math.sqrt(a));
-		  return (double) (Radius * c);  
-
-	}
 	///////////////////////////////////////////////
-    private void animar(boolean mostrar)
-    {
-        AnimationSet set = new AnimationSet(true);
-        Animation animation = null;
-        if (mostrar)
-        {
-            //desde la esquina inferior derecha a la superior izquierda
-            animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
-        }
-        else
-        {    //desde la esquina superior izquierda a la esquina inferior derecha
-             animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 1.0f);
-        }
-                //duración en milisegundos
-        animation.setDuration(500);
-        set.addAnimation(animation);
-        LayoutAnimationController controller = new LayoutAnimationController(set, 0.25f);
- 
-        llc.setLayoutAnimation(controller);
-        llc.startAnimation(animation);
-    }
+
 
     ////////////////////////////////////////7
 	@Override
@@ -319,7 +287,6 @@ public class Mapa extends Fragment
 	          {        	  
 			        if (llc.getVisibility() == View.VISIBLE)
 			        {
-			        	animar(false); 
 			            llc.setVisibility(View.GONE);
 			            mapall.setVisibility(View.VISIBLE);
 					    if(googleMap!= null)
@@ -367,8 +334,10 @@ public class Mapa extends Fragment
 						tvDistancia.setText("No tan lejos");
 					if(progresValue>20 && progresValue<=30)
 						tvDistancia.setText("Lejos");
-					if(progresValue>30 && progresValue<=40)
+					if(progresValue>30 && progresValue<40)
 						tvDistancia.setText("Muy lejos");
+					if(progresValue == 40)
+						tvDistancia.setText("Todo");
 					
 				}
 				@Override
@@ -385,9 +354,7 @@ public class Mapa extends Fragment
 				public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
 					
 					if(progresValue==50)
-					{
 						tvPrecios.setText("$"+Integer.toString(progresValue)+"+");
-					}
 					else
 						tvPrecios.setText("$"+Integer.toString(progresValue));
 				}
@@ -458,6 +425,10 @@ public class Mapa extends Fragment
 			    return linea;
 			}
 		}
+		public void EscibirRespaldoNegocios(String Json)
+		{
+			
+		}
 		/////////////////////////////////////////////////////		
 
 		@Override
@@ -470,32 +441,24 @@ public class Mapa extends Fragment
             // check for Internet status
             if (isInternetPresent) 
             {
-                // Internet Connection is Present
-                // make HTTP requests
-            	// Creating service handler class instance
+                // Internet Connection is Present make HTTP requests Creating service handler class instance
     			ServiceHandler sh = new ServiceHandler();
-
     			// Making a request to url and getting response
     			jsonStr = sh.makeServiceCall(url, ServiceHandler.GET);
+    			EscibirRespaldoNegocios(jsonStr);
             } 
             else 
             {
-                // Internet connection is not present
-                // Ask user to connect to Internet
             	jsonStr = leer_raw();
             }
 			
-			Log.d("Response: ", "> " + jsonStr);
-
 			if (jsonStr != null) 
 			{
 				try 
 				{
 					JSONObject jsonObj = new JSONObject(jsonStr);
-					// Getting JSON Array node
 					contacts = jsonObj.getJSONArray("negocios");
-
-					// looping through All Contacts
+					cargarPreferencias();
 					for (int i = 0; i < contacts.length(); i++) 
 					{
 						JSONObject c = contacts.getJSONObject(i);						
@@ -503,43 +466,34 @@ public class Mapa extends Fragment
 
 						if(id_icono.equals(idTipoNegocio))
 						{
-							//Marker marker_negocio;
-							String id = c.getString(TAG_ID);
-							String name = c.getString(TAG_NAME);
+							ba = new BusquedaAvanzada();
 							double latitud = Double.parseDouble(c.getString(TAG_LAT));
-							double longitud = Double.parseDouble(c.getString(TAG_LON));
-							
-							horarios = c.getJSONArray("horarios");
-							for (int hi = 0; hi < horarios.length(); hi++) 
+							double longitud = Double.parseDouble(c.getString(TAG_LON));	
+							if(ba.distancia(latitude, longitude, latitud, longitud, Distancia) && ba.precio(c.getJSONArray("menu"), Precio))
 							{
-								JSONObject h = horarios.getJSONObject(hi);
-								String dia =h.getString("dia");
-								String habre =h.getString("hora_abre");
-								String hcierra = h.getString("hora_cierra");
-							}
-
-							menu = c.getJSONArray("menu");
-							for (int mi = 0; mi < menu.length(); mi++) 
-							{
-								JSONObject m = menu.getJSONObject(mi);
-								String producto =m.getString("producto");
-								String precio =m.getString("precio");
-								String descripcion = m.getString("descripcion");
-							}
-							
-							final MarkerOptions marker = new MarkerOptions().position(new LatLng(latitud, longitud));
-				            marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-				            marker.title(c.getString(TAG_NEG_NAME));
-				            marker.snippet(c.getString(TAG_MENSAJE));
-				            handler.post(new Runnable() 
-							{
-								public void run() 
+								if(DesplegarDatos.equals("Mapa"))
 								{
-									googleMap.addMarker(marker);//Toast.makeText(getActivity(), "Wallpaper set",Toast.LENGTH_SHORT).show();
-								}
-							});
-				            
-				           // marker_negocio = googleMap.addMarker(marker);
+									String id = c.getString(TAG_ID);
+									String name = c.getString(TAG_NAME);
+
+									final MarkerOptions marker = new MarkerOptions().position(new LatLng(latitud, longitud));
+							        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+							        marker.title(c.getString(TAG_NEG_NAME));
+							        marker.snippet(c.getString(TAG_MENSAJE));
+							            
+							        handler.post(new Runnable() 
+							        {public void run() 
+									{
+										googleMap.addMarker(marker);
+									}
+									});
+								}else
+									if(DesplegarDatos.equals("Lista"))
+									{
+										
+									}
+							}
+							
 						}	
 					}
 				} 
