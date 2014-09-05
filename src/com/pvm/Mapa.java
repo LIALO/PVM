@@ -65,10 +65,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class Mapa extends Fragment
 {
-	String [][] iconos;
-	private static final String ResNegocios="";
-	// Movies json url
-	private static final String urll = "http://api.androidhive.info/json/movies.json";
+
 	private ProgressDialog pDialogg;
 	private List<Negocios> negList = new ArrayList<Negocios>();
 	private ListView listViewB;
@@ -76,7 +73,6 @@ public class Mapa extends Fragment
 	BusquedaAvanzada ba;
 	
 	private RadioGroup rgDesplegarRB;
-    private RadioButton radioMotrarNegocios; 
 	
 	boolean preferenciasGuardadas;
 
@@ -99,9 +95,7 @@ public class Mapa extends Fragment
 	private static int Distancia;
 	private static int Precio;	
 	private static String DesplegarDatos;
-	private static String idTipoNegocio;
 
-	
 	// URL to get contacts JSON
 	private static String url = "http://paqueteubiquen.esy.es/json.json";
 	
@@ -132,16 +126,6 @@ public class Mapa extends Fragment
 	/////////////////////////////////////////
 	private ProgressDialog pDialog;
 
-
-	// JSON Node names
-	
-	private static final String TAG_ID = "id";
-	private static final String TAG_ICON_ID = "id_icono";
-	private static final String TAG_NAME = "nombre";
-	private static final String TAG_NEG_NAME = "nombre_negocio";
-	private static final String TAG_MENSAJE = "mensaje";
-	private static final String TAG_LAT = "latitud";
-	private static final String TAG_LON = "longitud";
 
 	// contacts JSONArray
 	JSONArray contacts = null;
@@ -313,42 +297,45 @@ public class Mapa extends Fragment
 			try 
 			{
 				JSONObject obj = jsonArrayNegocios.getJSONObject(i);
-				if(Integer.parseInt(obj.getString("id_icono")) ==Integer.parseInt( idComercios[idIcono]))
+				if(Integer.parseInt(obj.getString("id_icono")) == Integer.parseInt( idComercios[idIcono]))
 				{
-					Negocios neg = new Negocios();
-					neg.setNombreNegocio(obj.getString("nombre_negocio"));
-					neg.setEslogan(obj.getString("mensaje"));
-					neg.setDireccion(obj.getString("calles"));
-					neg.setTelefono(obj.getString("telefono"));
-					neg.setTagsNegocio(obj.getString("tags"));
-					neg.setId_icono(Integer.parseInt(obj.getString("id_icono")));
-					neg.setLatitud(Double.parseDouble( obj.getString("latitud")));
-					neg.setLongitud(Double.parseDouble( obj.getString("longitud")));
-					neg.setThumbnailUrl(obj.getString("url_img"));
-					//Menu es json array
-					JSONArray menuArry = obj.getJSONArray("menu");
-					ArrayList<String> menu = new ArrayList<String>();
-					
-					for (int j = 0; j < menuArry.length(); j++) 
+					if(ba.distancia(latitude, longitude, Double.parseDouble( obj.getString("latitud")), Double.parseDouble( obj.getString("longitud")), Distancia) && ba.precio(obj.getJSONArray("menu"), Precio))
 					{
-						JSONObject itemM = menuArry.getJSONObject(j);
-						menu.add(itemM.getString("producto")+" "+itemM.getString("precio")+" "+itemM.getString("descripcion"));
+						Negocios neg = new Negocios();
+						neg.setNombreNegocio(obj.getString("nombre_negocio"));
+						neg.setEslogan(obj.getString("mensaje"));
+						neg.setDireccion(obj.getString("calles"));
+						neg.setTelefono(obj.getString("telefono"));
+						neg.setTagsNegocio(obj.getString("tags"));
+						neg.setId_icono(Integer.parseInt(obj.getString("id_icono")));
+						neg.setLatitud(Double.parseDouble( obj.getString("latitud")));
+						neg.setLongitud(Double.parseDouble( obj.getString("longitud")));
+						neg.setThumbnailUrl(obj.getString("url_img"));
+						//Menu es json array
+						JSONArray menuArry = obj.getJSONArray("menu");
+						ArrayList<String> menu = new ArrayList<String>();
+						
+						for (int j = 0; j < menuArry.length(); j++) 
+						{
+							JSONObject itemM = menuArry.getJSONObject(j);
+							menu.add(itemM.getString("producto")+" "+itemM.getString("precio")+" "+itemM.getString("descripcion"));
+						}
+						neg.setMenu(menu);
+		 
+						//Menu es json array
+						JSONArray horarioArry = obj.getJSONArray("menu");
+						ArrayList<String> horario = new ArrayList<String>();
+						
+						for (int j = 0; j < horarioArry.length(); j++) 
+						{
+							JSONObject itemH= horarioArry.getJSONObject(j);
+							menu.add(itemH.getString("dia")+" "+itemH.getString("hora_abre")+" "+itemH.getString("hora_cierra"));
+						}
+						neg.setHorarios(horario);
+						
+						// adding negocio to movies array
+						negList.add(neg);
 					}
-					neg.setMenu(menu);
-	 
-					//Menu es json array
-					JSONArray horarioArry = obj.getJSONArray("menu");
-					ArrayList<String> horario = new ArrayList<String>();
-					
-					for (int j = 0; j < horarioArry.length(); j++) 
-					{
-						JSONObject itemH= horarioArry.getJSONObject(j);
-						menu.add(itemH.getString("dia")+" "+itemH.getString("hora_abre")+" "+itemH.getString("hora_cierra"));
-					}
-					neg.setHorarios(horario);
-					
-					// adding negocio to movies array
-					negList.add(neg);
 				}
 
 
@@ -363,6 +350,58 @@ public class Mapa extends Fragment
 		// so that it renders the list view with updated data
 		clAdapter.notifyDataSetChanged();
 
+	}
+	public void CargarNegociosMapa(JSONArray jsonArrayNegocios,int idIcono)
+	{
+		if(pDialogg!=null)
+		{
+			// Showing progress dialog before making http request
+			pDialogg.setMessage("Cargando...");
+			pDialogg.show();
+		}
+		else
+		{
+			pDialogg = new ProgressDialog(getActivity());
+			// Showing progress dialog before making http request
+			pDialogg.setMessage("Cargando...");
+			pDialogg.show();
+
+		}
+		// Parsing json
+		for (int i = 0; i < jsonArrayNegocios.length(); i++) 
+		{
+			try 
+			{
+				JSONObject obj = jsonArrayNegocios.getJSONObject(i);
+				if(Integer.parseInt(obj.getString("id_icono")) == Integer.parseInt( idComercios[idIcono]))
+				{
+					if(ba.distancia(latitude, longitude, Double.parseDouble( obj.getString("latitud")), Double.parseDouble( obj.getString("longitud")), Distancia) && ba.precio(obj.getJSONArray("menu"), Precio))
+					{
+						final MarkerOptions marker = new MarkerOptions().position(new LatLng(Double.parseDouble( obj.getString("latitud")), Double.parseDouble( obj.getString("longitud"))));
+				        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+				        marker.title(obj.getString("nombre_negocio"));
+				        marker.snippet(obj.getString("mensaje"));
+				            
+				        handler.post(new Runnable() 
+				        {
+				        	public void run() 
+							{
+								googleMap.addMarker(marker);
+							}
+						});
+
+					}
+				}
+
+
+			} 
+			catch (JSONException e) 
+			{
+				e.printStackTrace();
+			}
+
+		}
+		hidePDialog();
 	}
     ////////////////////////////////////////7
 	@Override
@@ -401,7 +440,7 @@ public class Mapa extends Fragment
 								{
 									e.printStackTrace();
 								}
-
+								hidePDialog();
 							}
 						}, new Response.ErrorListener() 
 						{
@@ -463,13 +502,6 @@ public class Mapa extends Fragment
 					    	uno();
 					    }
 			        }
-		        	// selected item 
-				    idTipoNegocio = Integer.toString(position+1);
-				    // creating connection detector class instance
-				    cd = new DetectaConexion(getActivity().getApplicationContext());
-				    // Calling async task to get json
-				    new GetContacts().execute();
-
 	          }
 	        });
 
@@ -558,139 +590,5 @@ public class Mapa extends Fragment
 	}
 
 
-	/**
-	 * Async task class to get json by making HTTP call
-	 * */
-	private class GetContacts extends AsyncTask<Void, Void, Void> 
-	{
-
-		@Override
-		protected void onPreExecute() 
-		{
-			super.onPreExecute();
-			// Showing progress dialog
-			pDialog = new ProgressDialog(getActivity());
-			pDialog.setMessage("Please wait...");
-			pDialog.setCancelable(false);
-			pDialog.show();
-
-		}
-		
-		/////////////archivos de texto //////////////////////
-		
-		public String leer_raw()
-		{
-			String linea = "";
-			try
-			{
-			    InputStream fraw = getResources().openRawResource(R.raw.negocios);
-			    BufferedReader brin = new BufferedReader(new InputStreamReader(fraw));
-			    linea = brin.readLine(); 
-			    //linea = brin.readLine();
-			    fraw.close();
-			    return linea;
-			}
-			catch (Exception ex)
-			{
-			    Log.e("Ficheros", "Error al leer fichero desde recurso raw");
-			    return linea;
-			}
-		}
-		public void EscibirRespaldoNegocios(String Json)
-		{
-			
-		}
-		/////////////////////////////////////////////////////		
-
-		@Override
-		protected Void doInBackground(Void... arg0) 
-		{	
-			String jsonStr;
-			 // get Internet status
-            isInternetPresent = cd.isConnectingToInternet();
-
-            // check for Internet status
-            if (isInternetPresent) 
-            {
-                // Internet Connection is Present make HTTP requests Creating service handler class instance
-    			ServiceHandler sh = new ServiceHandler();
-    			// Making a request to url and getting response
-    			jsonStr = sh.makeServiceCall(url, ServiceHandler.GET);
-    			EscibirRespaldoNegocios(jsonStr);
-            } 
-            else 
-            {
-            	jsonStr = leer_raw();
-            }
-			
-			if (jsonStr != null) 
-			{
-				try 
-				{
-					JSONObject jsonObj = new JSONObject(jsonStr);
-					contacts = jsonObj.getJSONArray("negocios");
-					cargarPreferencias();
-					for (int i = 0; i < contacts.length(); i++) 
-					{
-						JSONObject c = contacts.getJSONObject(i);						
-						String id_icono =c.getString(TAG_ICON_ID);
-
-						if(id_icono.equals(idTipoNegocio))
-						{
-							ba = new BusquedaAvanzada();
-							double latitud = Double.parseDouble(c.getString(TAG_LAT));
-							double longitud = Double.parseDouble(c.getString(TAG_LON));	
-							if(ba.distancia(latitude, longitude, latitud, longitud, Distancia) && ba.precio(c.getJSONArray("menu"), Precio))
-							{
-								if(DesplegarDatos.equals("Mapa"))
-								{
-									String id = c.getString(TAG_ID);
-									String name = c.getString(TAG_NAME);
-
-									final MarkerOptions marker = new MarkerOptions().position(new LatLng(latitud, longitud));
-							        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-							        marker.title(c.getString(TAG_NEG_NAME));
-							        marker.snippet(c.getString(TAG_MENSAJE));
-							            
-							        handler.post(new Runnable() 
-							        {public void run() 
-									{
-										googleMap.addMarker(marker);
-									}
-									});
-								}else
-									if(DesplegarDatos.equals("Lista"))
-									{
-										
-									}
-							}
-							
-						}	
-					}
-				} 
-				catch (JSONException e) 
-				{
-					e.printStackTrace();
-				}
-			} 
-			else 
-			{
-				Log.e("ServiceHandler", "Couldn't get any data from the url");
-			}
-
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result) 
-		{
-			super.onPostExecute(result);
-			// Dismiss the progress dialog
-			if (pDialog.isShowing())
-				pDialog.dismiss();
-		}
-
-	}
- 
 
 }
