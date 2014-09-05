@@ -2,7 +2,7 @@ package com.customlistviewvolley.adater;
 
 import com.pvm.R;
 import com.customlistviewvolley.app.AppController;
-import com.customlistviewvolley.model.Movie;
+import com.customlistviewvolley.model.Negocios;
  
 import java.util.List;
  
@@ -20,22 +20,22 @@ import com.android.volley.toolbox.NetworkImageView;
 public class CustomListAdapter extends BaseAdapter {
     private Activity activity;
     private LayoutInflater inflater;
-    private List<Movie> movieItems;
+    private List<Negocios> negItems;
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
  
-    public CustomListAdapter(Activity activity, List<Movie> movieItems) {
+    public CustomListAdapter(Activity activity, List<Negocios> negItems) {
         this.activity = activity;
-        this.movieItems = movieItems;
+        this.negItems = negItems;
     }
  
     @Override
     public int getCount() {
-        return movieItems.size();
+        return negItems.size();
     }
  
     @Override
     public Object getItem(int location) {
-        return movieItems.get(location);
+        return negItems.get(location);
     }
  
     @Override
@@ -62,10 +62,10 @@ public class CustomListAdapter extends BaseAdapter {
         TextView year = (TextView) convertView.findViewById(R.id.releaseYear);
  
         // getting movie data for the row
-        Movie m = movieItems.get(position);
+        Negocios n = negItems.get(position);
  
         // thumbnail image
-        thumbNail.setImageUrl(m.getThumbnailUrl(), imageLoader);
+        thumbNail.setImageUrl(n.getThumbnailUrl(), imageLoader);
          
         // title
         title.setText(m.getTitle());

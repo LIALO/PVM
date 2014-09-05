@@ -5,11 +5,21 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.customlistviewvolley.adater.CustomListAdapter;
+import com.customlistviewvolley.model.Negocios;
+import com.customlistviewvolley.app.AppController;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,6 +65,14 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class Mapa extends Fragment
 {
+	String [][] iconos;
+	private static final String ResNegocios="";
+	// Movies json url
+	private static final String urll = "http://api.androidhive.info/json/movies.json";
+	private ProgressDialog pDialogg;
+	private List<Negocios> negList = new ArrayList<Negocios>();
+	private ListView listViewB;
+	private CustomListAdapter clAdapter;
 	BusquedaAvanzada ba;
 	
 	private RadioGroup rgDesplegarRB;
@@ -104,6 +122,7 @@ public class Mapa extends Fragment
     //////////////varialbes list view/////
     
     String[] comercios;
+    String[] idComercios;
 	
 	private LinearLayout llc;
 	private LinearLayout llba;
@@ -139,13 +158,10 @@ public class Mapa extends Fragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) 
 	{
 		View rootView = inflater.inflate(R.layout.fragment_mapa, container, false);
-		// storing string resources into Array
-        comercios = getResources().getStringArray(R.array.tipoNegocios);
         initilizeMap();
 		return rootView;
 	}
 	//MÉTODOS MAPA////////////////////////
-	
 	public void uno()
 	{
 	            try
@@ -210,8 +226,7 @@ public class Mapa extends Fragment
 		marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
 		markerPrincipal = googleMap.addMarker(marker);
 
-    }
-    
+    } 
     private void initilizeMap() 
     {
        // if (googleMap == null) 
@@ -261,20 +276,154 @@ public class Mapa extends Fragment
       
     }
 	///////////////////////////////////////////////
+    private void hidePDialog() {
+		if (pDialog != null) {
+			pDialog.dismiss();
+			pDialog = null;
+		}
+	}
+
+	public void CargarIconos(JSONArray jsonArrayIconos)
+	{
+		// Parsing json
+		comercios = new String[jsonArrayIconos.length()];
+		idComercios = new String[jsonArrayIconos.length()];
+		for (int i = 0; i < jsonArrayIconos.length(); i++) 
+		{
+			try 
+			{
+				JSONObject obj = jsonArrayIconos.getJSONObject(i);
+				comercios[i] = obj.getString("descripcion");
+				idComercios[i] = obj.getString("id");
+			} 
+			catch (JSONException e) 
+			{
+				e.printStackTrace();
+			}
+
+		}
+	}
+	public void CargarNegocios(JSONArray jsonArrayNegocios,int idIcono)
+	{
+		hidePDialog();
+		negList.clear();
+		// Parsing json
+		for (int i = 0; i < jsonArrayNegocios.length(); i++) 
+		{
+			try 
+			{
+				JSONObject obj = jsonArrayNegocios.getJSONObject(i);
+				if(Integer.parseInt(obj.getString("id_icono")) ==Integer.parseInt( idComercios[idIcono]))
+				{
+					Negocios neg = new Negocios();
+					neg.setNombreNegocio(obj.getString("nombre_negocio"));
+					neg.setEslogan(obj.getString("mensaje"));
+					neg.setDireccion(obj.getString("calles"));
+					neg.setTelefono(obj.getString("telefono"));
+					neg.setTagsNegocio(obj.getString("tags"));
+					neg.setId_icono(Integer.parseInt(obj.getString("id_icono")));
+					neg.setLatitud(Double.parseDouble( obj.getString("latitud")));
+					neg.setLongitud(Double.parseDouble( obj.getString("longitud")));
+					neg.setThumbnailUrl(obj.getString("url_img"));
+					//Menu es json array
+					JSONArray menuArry = obj.getJSONArray("menu");
+					ArrayList<String> menu = new ArrayList<String>();
+					
+					for (int j = 0; j < menuArry.length(); j++) 
+					{
+						JSONObject itemM = menuArry.getJSONObject(j);
+						menu.add(itemM.getString("producto")+" "+itemM.getString("precio")+" "+itemM.getString("descripcion"));
+					}
+					neg.setMenu(menu);
+	 
+					//Menu es json array
+					JSONArray horarioArry = obj.getJSONArray("menu");
+					ArrayList<String> horario = new ArrayList<String>();
+					
+					for (int j = 0; j < horarioArry.length(); j++) 
+					{
+						JSONObject itemH= horarioArry.getJSONObject(j);
+						menu.add(itemH.getString("dia")+" "+itemH.getString("hora_abre")+" "+itemH.getString("hora_cierra"));
+					}
+					neg.setHorarios(horario);
+					
+					// adding negocio to movies array
+					negList.add(neg);
+				}
 
 
+			} 
+			catch (JSONException e) 
+			{
+				e.printStackTrace();
+			}
+
+		}
+		// notifying list adapter about data changes
+		// so that it renders the list view with updated data
+		clAdapter.notifyDataSetChanged();
+
+	}
     ////////////////////////////////////////7
 	@Override
 	public void onStart() 
 	{
 			super.onStart();
 			
+			listViewB = (ListView) getActivity().findViewById(R.id.lvNegociosB);
+			clAdapter = new CustomListAdapter(getActivity(), negList);
+			listViewB.setAdapter(adapter);
+
+			
 			llc = (LinearLayout)getActivity().findViewById(R.id.list_view_contenedor);
 			llba = (LinearLayout)getActivity().findViewById(R.id.busquedaAvanzada);
 			mapall =(LinearLayout)getActivity().findViewById(R.id.contenedor_mapa);
 		    mapall.setVisibility(View.INVISIBLE);
 		    llba.setVisibility(View.INVISIBLE);
-		        
+		    
+/////////////////// Obtener Negocios //////////////////////////////////
+		    pDialogg = new ProgressDialog(getActivity());
+			// Showing progress dialog before making http request
+			pDialogg.setMessage("Loading...");
+			pDialogg.show();
+			JsonObjectRequest movieReq = new JsonObjectRequest(url,null, new Response.Listener<JSONObject>() 
+						{
+							@Override
+							public void onResponse(JSONObject response)
+							{
+								try 
+								{
+
+									CargarIconos(response.getJSONArray("iconos"));
+									ba.respaldarNegocios(response.getJSONArray("negocios").toString(), getActivity().getBaseContext(), "negocios.txt");
+									ba.respaldarNegocios(response.getJSONArray("iconos").toString(), getActivity().getBaseContext(), "iconos.txt");
+								} catch (JSONException e) 
+								{
+									e.printStackTrace();
+								}
+
+							}
+						}, new Response.ErrorListener() 
+						{
+							@Override
+							public void onErrorResponse(VolleyError error) 
+							{
+								try 
+								{	
+									JSONArray IconosApp =new JSONArray(ba.leerNegocios(getActivity().getBaseContext(),"iconos.txt"));
+									CargarIconos(IconosApp);
+								} catch (JSONException e) 
+								{
+									e.printStackTrace();
+								}
+								
+								hidePDialog();
+							}
+						});
+
+				// Adding request to request queue
+				AppController.getInstance().addToRequestQueue(movieReq);
+		//////////////Fin Obtener Negocios///////////////
 		 // get the listview
 			lvNegocios = (ListView) getActivity().findViewById(R.id.lvNegocios);
 			// Adding items to listview
@@ -284,7 +433,26 @@ public class Mapa extends Fragment
 	        lvNegocios.setOnItemClickListener(new OnItemClickListener() 
 	        {
 	          public void onItemClick(AdapterView<?> parent, View view,int position, long id) 
-	          {        	  
+	          {        	 
+	  			////////////////////////////////// ListView Negocios ////////////////////////////////////////
+	  			////////////////////////////////////////////////////////////////////////////////////////////
+	  			cargarPreferencias();
+	  			
+	  			if(DesplegarDatos.equals("Lista"))
+	  			{
+					JSONArray NegiociosApp;
+					try 
+					{
+						NegiociosApp = new JSONArray(ba.leerNegocios(getActivity().getBaseContext(),"negocios.txt"));
+						CargarNegocios(NegiociosApp, position);
+					} 
+					catch (JSONException e) {
+						e.printStackTrace();
+					} 
+	  			}
+	  			
+	  			////////////////////////////////////////////////////////////////////////////////////////////
+	  			////////////////////////////////////////////////////////////////////////////////////////////
 			        if (llc.getVisibility() == View.VISIBLE)
 			        {
 			            llc.setVisibility(View.GONE);
@@ -366,6 +534,9 @@ public class Mapa extends Fragment
 				public void onStopTrackingTouch(SeekBar seekBar) {}
 			});
 			/////////////////////////////////////////////////////////////////////
+			
+
+			
 	     ////// OnCick Marketer /////////////////// 
 			if(googleMap!=null)
 			{

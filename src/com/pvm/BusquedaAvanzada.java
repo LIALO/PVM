@@ -1,9 +1,16 @@
 package com.pvm;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.LayoutAnimationController;
@@ -75,6 +82,44 @@ public class BusquedaAvanzada
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return false;
+		}
+	}
+	
+	public void respaldarNegocios(String negocios, Context c,String nomArchivo)
+	{
+		try
+		{
+		    OutputStreamWriter fout= new OutputStreamWriter(c.openFileOutput(nomArchivo, c.MODE_PRIVATE));
+		 
+		    fout.write(negocios);
+		    fout.close();
+		}
+		catch (Exception ex)
+		{
+		    Log.e("Ficheros", "Error al escribir fichero a memoria interna");
+		}
+	}
+
+	public String leerNegocios(Context c,String nomArchivo)
+	{
+		String linea = "";
+		String todo = "";
+		try
+		{
+		    BufferedReader brin =   new BufferedReader(new InputStreamReader(c.openFileInput(nomArchivo)));
+		    linea = brin.readLine();
+	         while (linea != null) 
+	         {
+	        	 todo = todo + linea + " ";
+	        	 linea = brin.readLine();
+	         }	
+		    brin.close();
+		    return todo;
+		}
+		catch (Exception ex)
+		{
+		    Log.e("Ficheros", "Error al leer fichero desde memoria interna");
+		    return todo;
 		}
 	}
 	
