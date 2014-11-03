@@ -55,8 +55,6 @@ public class BusquedaAvanzada
 	}
 	public boolean precio(JSONArray menu,int precio)
 	{
-		try 
-		{
 			if(precio == 50)
 			{
 				return true;
@@ -66,23 +64,25 @@ public class BusquedaAvanzada
 				boolean precioOK=false;
 				for (int mi = 0; mi < menu.length(); mi++) 
 				{
-					JSONObject m = menu.getJSONObject(mi);
-					
-					if( Integer.parseInt(m.getString("precio")) <= precio )
+					JSONObject m;
+					try 
 					{
-						precioOK =true;
-						break;
+						m = menu.getJSONObject(mi);
+						if( Double.parseDouble(m.getString("precio")) <= precio )
+						{
+							precioOK =true;
+							break;
+						}
+					} 
+					catch (JSONException e) 
+					{
+						precioOK=false;
+						e.printStackTrace();
 					}
 				}
 				return precioOK;
 			}
-		} 
-		catch (JSONException e) 
-		{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return false;
-		}
+		
 	}
 	
 	public void respaldarNegocios(String negocios, Context c,String nomArchivo)
@@ -119,7 +119,7 @@ public class BusquedaAvanzada
 		catch (Exception ex)
 		{
 		    Log.e("Ficheros", "Error al leer fichero desde memoria interna");
-		    return todo;
+		    return "";
 		}
 	}
 	

@@ -1,4 +1,11 @@
 package com.pvm;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.customlistviewvolley.app.AppController;
 import com.google.android.gms.maps.SupportMapFragment;
 
 import android.support.v7.app.ActionBarActivity;
@@ -7,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -23,25 +31,33 @@ import android.view.animation.LayoutAnimationController;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener 
 {
+	BusquedaAvanzada ba = new BusquedaAvanzada();
+	private ProgressDialog pDialogg;
 	private SeekBar sbPrecios;
 	private TextView tvPrecios;
 	private SeekBar sbDistancia;
 	private TextView tvDistancia;
-	 private RadioButton radioMapa;
-	 private RadioButton radioLista;
-	LinearLayout llc ;
-	LinearLayout llba ;
-	LinearLayout mapall ;
+	private RadioButton radioMapa;
+	private RadioButton radioLista;
+	private LinearLayout llc;
+	private LinearLayout lllst;
+	private LinearLayout llba;
+	private LinearLayout llv;
+	private LinearLayout llmapa;
+
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
+	// URL to get contacts JSON
+	private static String url = "http://paqueteubiquen.esy.es/json.json";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
 	{
@@ -69,10 +85,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 		// For each of the sections in the app, add a tab to the action bar.
 		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) 
 		{
-			// Create a tab with text corresponding to the page title defined by
-			// the adapter. Also specify this Activity object, which implements
-			// the TabListener interface, as the callback (listener) for when
-			// this tab is selected.
 			actionBar.addTab(actionBar.newTab().setText(mSectionsPagerAdapter.getPageTitle(i)).setTabListener(this));
 			
 		}
@@ -81,6 +93,44 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 			ActionBar.Tab tab = actionBar.getTabAt(i);
 			asigna_icono(tab);
 		}
+		pDialogg = new ProgressDialog(this);
+		// Showing progress dialog before making http request
+		pDialogg.setMessage("Bienvenido...\nCargando datos");
+		pDialogg.show();
+		JsonObjectRequest negReq = new JsonObjectRequest(url,null, new Response.Listener<JSONObject>() 
+				{
+					@Override
+					public void onResponse(JSONObject response)
+					{
+						try 
+						{
+							ba.respaldarNegocios(response.getJSONArray("negocios").toString(),getApplicationContext(), "negocios.txt");
+							ba.respaldarNegocios(response.getJSONArray("iconos").toString(), getApplicationContext(), "iconos.txt");
+
+						} catch (JSONException e) 
+						{
+							e.printStackTrace();
+						}
+						if (pDialogg != null) {
+							pDialogg.dismiss();
+							pDialogg = null;
+						}
+					}
+				}, new Response.ErrorListener() 
+				{
+					@Override
+					public void onErrorResponse(VolleyError error) 
+					{				
+						Toast.makeText(getApplicationContext(),"No se ha conectado con el servidor.\n Se usaran los datos locales", Toast.LENGTH_SHORT).show();
+						if (pDialogg != null) {
+							pDialogg.dismiss();
+							pDialogg = null;
+						}
+					}
+				});
+
+		// Adding request to request queue
+		AppController.getInstance().addToRequestQueue(negReq);
 	}
 
 	
@@ -142,61 +192,101 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 ///////////////////////////////////////////////
 private void animar(boolean mostrar)
 {
-AnimationSet set = new AnimationSet(true);
-Animation animation = null;
-if (mostrar)
+	AnimationSet set = new AnimationSet(true);
+	Animation animation = null;
+	if (mostrar)
+	{
+	//desde la esquina inferior derecha a la superior izquierda
+	animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
+	}
+	else
+	{    //desde la esquina superior izquierda a la esquina inferior derecha
+	animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 1.0f);
+	}
+	//duración en milisegundos
+	animation.setDuration(500);
+	set.addAnimation(animation);
+	LayoutAnimationController controller = new LayoutAnimationController(set, 0.25f);
+	
+	llc.setLayoutAnimation(controller);
+	llc.startAnimation(animation);
+}
+public void mostrarContenido(boolean negocios,boolean lista,boolean mapa,boolean opcAvanzadas,boolean vista)
 {
-//desde la esquina inferior derecha a la superior izquierda
-animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
-}
-else
-{    //desde la esquina superior izquierda a la esquina inferior derecha
-animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 1.0f);
-}
-//duración en milisegundos
-animation.setDuration(500);
-set.addAnimation(animation);
-LayoutAnimationController controller = new LayoutAnimationController(set, 0.25f);
+	if(negocios)
+	{
+		llv.setVisibility(View.GONE);
+		lllst.setVisibility(View.GONE);
+		llmapa.setVisibility(View.GONE);
+		llba.setVisibility(View.GONE);
+		llc.setVisibility(View.VISIBLE);
+	}
+	if(lista)
+	{
+		llv.setVisibility(View.GONE);
+		llc.setVisibility(View.GONE);
+		llmapa.setVisibility(View.GONE);
+		llba.setVisibility(View.GONE);
+		lllst.setVisibility(View.VISIBLE);
+	}
 
-llc.setLayoutAnimation(controller);
-llc.startAnimation(animation);
+	if(mapa)
+	{
+		llv.setVisibility(View.GONE);
+		llc.setVisibility(View.GONE);
+		lllst.setVisibility(View.GONE);
+		llba.setVisibility(View.GONE);
+		llmapa.setVisibility(View.VISIBLE);
+	}
+	if(opcAvanzadas)
+	{
+		llv.setVisibility(View.GONE);
+		llc.setVisibility(View.GONE);
+		lllst.setVisibility(View.GONE);
+		llmapa.setVisibility(View.GONE);
+		llba.setVisibility(View.VISIBLE);
+	}
+	if(lista)
+	{
+		llc.setVisibility(View.GONE);
+		lllst.setVisibility(View.GONE);
+		llmapa.setVisibility(View.GONE);
+		llba.setVisibility(View.GONE);
+		llv.setVisibility(View.VISIBLE);
+	}
+	
 }
 /////////////////////////////////////////////////
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) 
 	{
 		llc = (LinearLayout)findViewById(R.id.list_view_contenedor);
-	 	mapall =(LinearLayout)findViewById(R.id.contenedor_mapa);
-	 	llba = (LinearLayout)findViewById(R.id.busquedaAvanzada);
-		int id = item.getItemId();
-		if (id == R.id.action_search) 
+		lllst = (LinearLayout)findViewById(R.id.llNegociosB);
+		llba = (LinearLayout)findViewById(R.id.busquedaAvanzada);
+		llv = (LinearLayout)findViewById(R.id.vistaNegocio);
+		llmapa  = (LinearLayout)findViewById(R.id.contenedor_mapa);
+		if (item.getItemId() == R.id.action_search) 
 		{
 	       	 if (llc.getVisibility() == View.GONE)
 	         {
 	             animar(true);
-	             llc.setVisibility(View.VISIBLE);
-	             mapall.setVisibility(View.GONE);
-	             llba.setVisibility(View.GONE);
-	             
+	             mostrarContenido(true,false,false,false,false);	             
 	         }
 	       	 if(llba.getVisibility()==View.VISIBLE)
 	       	 {
 	       		 animar(true);
-	             llc.setVisibility(View.VISIBLE);
-	             mapall.setVisibility(View.GONE);
-	             llba.setVisibility(View.GONE);
+	       		 mostrarContenido(true,false,false,false,false);
 	       	 }
 			return true;
 		}
-		if(id==R.id.action_configBA)
+		if(item.getItemId()==R.id.action_configBA)
 		{
-	       	 if (llc.getVisibility() == View.VISIBLE ||mapall.getVisibility()==View.VISIBLE )
+	       	 if (llc.getVisibility() == View.VISIBLE || llmapa.getVisibility()==View.VISIBLE || lllst.getVisibility()==View.VISIBLE )
 	         {
 	       		cargarPreferencias();
-	             llc.setVisibility(View.GONE);
-	             mapall.setVisibility(View.GONE);
-	             llba.setVisibility(View.VISIBLE);
+	       		mostrarContenido(false,false,false,true,false);
 	         }
+
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -216,13 +306,15 @@ llc.startAnimation(animation);
 			tvDistancia.setText("No tan ejos");
 		if(sbDistancia.getProgress()>20 && sbDistancia.getProgress()<=30)
 			tvDistancia.setText("Lejos");
-		if(sbDistancia.getProgress()>30 && sbDistancia.getProgress()<=40)
+		if(sbDistancia.getProgress()>30 && sbDistancia.getProgress()<40)
 			tvDistancia.setText("Muy lejos");
+		if(sbDistancia.getProgress()==40)
+			tvDistancia.setText("Todo");
         
         
         sbPrecios.setProgress(Integer.parseInt(prefs.getString("Precio", "0")));
         if( sbPrecios.getProgress()==50)
-        	tvPrecios.setText("$"+prefs.getString("Precio", "0")+"+");
+        	tvPrecios.setText("Todo");
         else
         	tvPrecios.setText("$"+prefs.getString("Precio", "0"));
         

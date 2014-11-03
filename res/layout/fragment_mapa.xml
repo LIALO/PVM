@@ -66,7 +66,7 @@
                     android:layout_height="wrap_content" >
 
                     <TextView
-                        android:id="@+id/textView1"
+                        android:id="@+id/menuItems"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Distancia de Búsqueda:"
@@ -101,7 +101,7 @@
                     android:layout_height="wrap_content" >
 
                     <TextView
-                        android:id="@+id/textView2"
+                        android:id="@+id/horario"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Limite de Precio:"
@@ -193,5 +193,170 @@
             android:listSelector="@drawable/list_row_selector" >
         </ListView>
     </LinearLayout>
+<LinearLayout
+    android:id="@+id/vistaNegocio"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
+  <ScrollView
+      android:id="@+id/scrollView1"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content" >
+
+      <LinearLayout
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content"
+          android:padding="8dp" 
+          android:orientation="vertical">
+
+          <com.android.volley.toolbox.NetworkImageView
+              android:id="@+id/vistaImg"
+              android:layout_width="80dp"
+              android:layout_height="80dp"
+              android:layout_marginRight="8dp" />
+
+          <TextView
+              android:id="@+id/vistaNom"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textSize="@dimen/title"
+              android:textStyle="bold" />
+
+          <TextView
+              android:id="@+id/vistaSlog"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="1dip"
+              android:textSize="@dimen/rating" />
+
+          <TextView
+              android:id="@+id/vistaDireccion"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="5dp"
+              android:textColor="@color/genre"
+              android:textSize="@dimen/genre" />
+
+          <TextView
+              android:id="@+id/vistaUrlNegocio"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textColor="@color/year"
+              android:textSize="@dimen/year" />
+
+	   <TableLayout 
+	    android:id="@+id/TablaM"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:stretchColumns="1" >
+  
+		</TableLayout>
+
+	    <TableLayout 
+	    android:id="@+id/TablaH"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:stretchColumns="1" >
+	 
+		    <TableRow
+		        android:id="@+id/SeparadorCabecera1"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content" >
+		 
+		        <FrameLayout
+		            android:id="@+id/LineaCabecera1"
+		            android:layout_width="fill_parent"
+		            android:layout_height="2dp"
+		            android:layout_span="3"
+		            android:background="#FFFFFF" >
+		        </FrameLayout>
+		    </TableRow>
+	    
+		    <TableRow
+		        android:id="@+id/TituloTabla1"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content" >	
+		            <TextView
+			            android:id="@+id/TituloHorario1"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:padding="10dp"
+			            android:text="Horario"
+			            android:textColor="#005500"
+			            android:textSize="26sp" />
+		    </TableRow>
+		    
+	        <TableRow
+		        android:id="@+id/SeparadorCabecera2"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content" >
+		 
+		        <FrameLayout
+		            android:id="@+id/LineaCabecera2"
+		            android:layout_width="fill_parent"
+		            android:layout_height="2dp"
+		            android:layout_span="3"
+		            android:background="#FFFFFF" >
+		        </FrameLayout>
+	        
+	   	 	</TableRow>
+	    
+		   <TableRow
+		        android:id="@+id/Cabecera2"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content" >
+		
+		        <TextView
+		            android:id="@+id/ColumnaDia"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:padding="15dp"
+		            android:text="Día"
+		            android:textColor="#005500"
+		            android:textSize="26sp" />
+		       
+		        <TextView
+		            android:id="@+id/ColumnaHoraA"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_gravity="center_horizontal"
+		            android:padding="15dp"
+		            android:text="Hora que abre"
+		            android:textColor="#005500"
+		            android:textSize="26sp" />
+		 
+		        <TextView
+		            android:id="@+id/ColumnaHoraC"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:padding="15dp"
+		            android:text="Hora que cierra"
+		            android:textColor="#005500"
+		            android:textSize="26sp" />
+	
+		    </TableRow>
+	
+		</TableLayout>
+
+      
+      <LinearLayout android:layout_width="match_parent" 
+          android:layout_height="wrap_content" 
+          android:orientation="vertical">
+
+	      <Button android:id="@+id/backVistaNeg" 
+	          style="?android:attr/buttonStyleSmall" 
+	          android:layout_width="fill_parent" 
+	          android:layout_height="wrap_content" 
+	          android:text="Atrás" 
+	          android:layout_gravity="center" />
+
+ 	 </LinearLayout>
+  
+     </LinearLayout>
+  </ScrollView>
+
+  
+
+</LinearLayout>
 </LinearLayout>

@@ -54,36 +54,27 @@ public class CustomListAdapter extends BaseAdapter {
  
         if (imageLoader == null)
             imageLoader = AppController.getInstance().getImageLoader();
-        NetworkImageView thumbNail = (NetworkImageView) convertView.findViewById(R.id.thumbnail);
-        TextView title = (TextView) convertView.findViewById(R.id.title);
-        TextView rating = (TextView) convertView.findViewById(R.id.rating);
-        TextView genre = (TextView) convertView.findViewById(R.id.genre);
-        TextView year = (TextView) convertView.findViewById(R.id.releaseYear);
+        NetworkImageView thumbNail = (NetworkImageView) convertView.findViewById(R.id.vistaImg);
+        TextView nomNeg = (TextView) convertView.findViewById(R.id.vistaNom);
+        TextView slogan = (TextView) convertView.findViewById(R.id.slogan);
+        TextView tags = (TextView) convertView.findViewById(R.id.tags);
  
-        // getting movie data for the row
+        // getting market data for the row
         Negocios n = negItems.get(position);
  
         // thumbnail image
         thumbNail.setImageUrl(n.getThumbnailUrl(), imageLoader);
-         
-        // title
-        title.setText(m.getTitle());
-         
-        // rating
-        rating.setText("Rating: " + String.valueOf(m.getRating()));
-         
-        // genre
-        String genreStr = "";
-        for (String str : m.getGenre()) {
-            genreStr += str + ", ";
-        }
-        genreStr = genreStr.length() > 0 ? genreStr.substring(0,
-                genreStr.length() - 2) : genreStr;
-        genre.setText(genreStr);
-         
-        // release year
-        year.setText(String.valueOf(m.getYear()));
- 
+
+        //nombre negocio
+        nomNeg.setText(n.getNombreNegocio());
+        
+        //tags
+        tags.setText("Qué ofrece: "+n.getTagsNegocio());
+        
+        // Slogan
+        slogan.setText(n.getEslogan());
+
+
         return convertView;
     }
  
