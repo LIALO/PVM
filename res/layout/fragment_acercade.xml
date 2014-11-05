@@ -1,88 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/cancelCBTN"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
     android:background="#2C6700"
     android:orientation="vertical" >
-
-    <ScrollView
-        android:id="@+id/scrollView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    <LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:background="#2C6700" android:orientation="vertical">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="80dp" android:gravity="center" android:paddingBottom="7dp" android:paddingTop="7dp">
-
-        <ImageView android:id="@+id/imageView1" android:layout_width="wrap_content" android:layout_height="fill_parent" android:adjustViewBounds="true" android:src="@drawable/logo" />
-
-    </LinearLayout>
-
-   <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:orientation="vertical">
-
-       <TextView android:id="@+id/horario" 
-           android:layout_width="fill_parent" 
-           android:layout_height="wrap_content" 
-           android:text="@+string/nomemp" 
-           android:textColor="#ffffff" 
-           android:textSize="16sp" 
-           android:paddingBottom="10dp" 
-           android:gravity="center" />
-       <TextView android:id="@+id/textView3" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@+string/correo" android:textColor="#ffffff" android:textSize="17sp" android:paddingBottom="10dp" android:gravity="center" />
-       <TextView android:id="@+id/textView4" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@+string/telefono" android:textColor="#ffffff" android:textSize="17sp" android:paddingBottom="12dp" android:gravity="center" />
-
-       	<LinearLayout android:id="@+id/opciones_acercade" android:layout_width="fill_parent" android:layout_height="60dp" android:layout_marginTop="10dp" android:gravity="center" android:orientation="vertical">
-			<Button android:id="@+id/comentariosButton" android:layout_width="fill_parent" android:layout_height="60dp" android:background="#669966" android:onClick="comentarButtonClicked" android:textSize="20sp" android:text="@string/comentar" android:textColor="#ffffff" />
-	 </LinearLayout>
-	 <LinearLayout android:id="@+id/opciones_acercade2" android:layout_width="fill_parent" android:layout_height="60dp" android:layout_marginTop="10dp" android:gravity="center" android:orientation="vertical">
-			<Button android:id="@+id/registrarseButton" android:layout_width="fill_parent" android:layout_height="60dp" android:background="#669966" android:onClick="registroButtonClicked" android:textSize="20sp" android:text="@string/registrar" android:textColor="#ffffff" />
-
-	 </LinearLayout>
-        
-    </LinearLayout>
-
- 
-
-       <LinearLayout android:id="@+id/layout_unete" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
-
-           <EditText android:id="@+id/et_comentario" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="10dp" android:layout_marginLeft="10dip" android:layout_marginRight="10dip" android:background="#ffffff" android:gravity="center" android:lines="5" android:singleLine="false">
-
-               <requestFocus />
-           </EditText>
-       <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginLeft="15dp" android:layout_marginRight="15dp" android:paddingBottom="10dp">
-           <Button android:id="@+id/enviarCButton" android:layout_width="fill_parent" android:layout_height="50dp" android:background="#669966" android:onClick="enviarCButtonClicked" android:text="@string/enviar" android:textColor="#ffffff" android:textSize="25sp" />
-           </LinearLayout>
-       <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginLeft="15dp" android:layout_marginRight="15dp">
-           <Button android:id="@+id/cancelCBoton" android:layout_width="fill_parent" android:layout_height="50dp" android:background="#669966" android:onClick="cancelCButtonClicked" android:text="@string/cancelar" android:textColor="#ffffff" android:textSize="25sp" />
-	</LinearLayout>
-       </LinearLayout>
-
-
-        <LinearLayout android:id="@+id/layout_comentarios" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="10dp">
-
-            <TextView android:id="@+id/textView8" android:layout_width="fill_parent" android:layout_height="wrap_content" android:gravity="center" android:paddingBottom="5dp" android:text="@+string/nomReg" android:textColor="#ffffff" android:textSize="16sp" />
-
-            <EditText android:id="@+id/etnomlReg" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="#F4F4F4" android:ems="10" android:inputType="text" android:textSize="25sp" />
-            
-            <TextView android:id="@+id/textView6" android:layout_width="fill_parent" android:layout_height="wrap_content" android:gravity="center" android:paddingBottom="5dp" android:text="@+string/dirReg" android:textColor="#ffffff" android:textSize="16sp" />
-
-            <EditText android:id="@+id/etdirReg" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="#F4F4F4" android:ems="10" android:inputType="text" android:textSize="25sp" />
-
-            <TextView android:id="@+id/textView7" android:layout_width="fill_parent" android:layout_height="wrap_content" android:gravity="center" android:paddingBottom="5dp" android:text="@+string/telReg" android:textColor="#ffffff" android:textSize="16sp" />
-
-            <EditText android:id="@+id/ettelReg" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="#F4F4F4" android:ems="10" android:inputType="text" android:textSize="25sp" />
-
-            <LinearLayout android:layout_width="fill_parent" android:layout_height="110dp" android:layout_marginTop="10dp" android:gravity="center" android:orientation="vertical">
-		       <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginLeft="15dp" android:layout_marginRight="15dp" android:paddingBottom="10dp">
-		                <Button android:id="@+id/enviarRButton" android:layout_width="fill_parent" android:layout_height="50dp" android:background="#669966" android:onClick="enviarRButtonClicked" android:text="@string/enviar" android:textColor="#ffffff" android:textSize="25sp" />
-			</LinearLayout>
-		    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginLeft="15dp" android:layout_marginRight="15dp">
-		             <Button android:id="@+id/cancelRBoton" android:layout_width="fill_parent" android:layout_height="50dp" android:background="#669966" android:onClick="cancelRButtonClicked" android:text="@string/cancelar" android:textColor="#ffffff" android:textSize="25sp" />
-			</LinearLayout>
-        </LinearLayout>
-        </LinearLayout>
-    
-    
-</LinearLayout></ScrollView>
-
 
 
 </LinearLayout>

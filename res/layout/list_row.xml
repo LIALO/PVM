@@ -19,7 +19,7 @@
         android:layout_alignTop="@+id/vistaImg"
         android:layout_toRightOf="@+id/vistaImg"
         android:textSize="@dimen/title"
-        android:textStyle="bold" />
+        android:textStyle="bold" android:textColor="#5aaca5" />
 
     <TextView
         android:id="@+id/slogan"
@@ -28,7 +28,7 @@
         android:layout_below="@id/vistaNom"
         android:layout_marginTop="2dip"
         android:layout_toRightOf="@+id/vistaImg"
-        android:textSize="@dimen/rating" />
+        android:textSize="@dimen/rating" android:textColor="#5aaca5"/>
     <TextView
         android:id="@+id/tags"
         android:layout_width="fill_parent"
@@ -36,7 +36,7 @@
         android:layout_below="@id/slogan"
         android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/vistaImg"
-        android:textColor="@color/genre"
+        android:textColor="#5aaca5"
         android:textSize="@dimen/genre" />
 
 

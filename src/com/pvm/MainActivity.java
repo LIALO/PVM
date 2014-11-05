@@ -16,7 +16,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -57,16 +59,16 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 	ViewPager mViewPager;
 	// URL to get contacts JSON
 	private static String url = "http://paqueteubiquen.esy.es/json.json";
-	
+	Resources mResources;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+		mResources = getResources();
 		// Set up the action bar.
 		final ActionBar actionBar = getSupportActionBar();
-		actionBar.setBackgroundDrawable(new ColorDrawable(Color.rgb(00,154,49)));
+		actionBar.setBackgroundDrawable(new ColorDrawable(Color.rgb(90,172,165)));
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		
 		mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -81,12 +83,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 						actionBar.setSelectedNavigationItem(position);
 					}
 				});
-
+		
+		
 		// For each of the sections in the app, add a tab to the action bar.
 		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) 
 		{
 			actionBar.addTab(actionBar.newTab().setText(mSectionsPagerAdapter.getPageTitle(i)).setTabListener(this));
-			
 		}
 		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) 
 		{
@@ -131,6 +133,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
 		// Adding request to request queue
 		AppController.getInstance().addToRequestQueue(negReq);
+		
 	}
 
 	
@@ -174,7 +177,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 				tab.setIcon(android.R.drawable.ic_dialog_map);
 				return;
 			case 1:
-				tab.setIcon(android.R.drawable.ic_dialog_info);
+				tab.setIcon(mResources.getDrawable(R.drawable.ic_action_view_as_list));
 				return;
 			case 2:
 				return;
@@ -289,6 +292,12 @@ public void mostrarContenido(boolean negocios,boolean lista,boolean mapa,boolean
 
 			return true;
 		}
+		if(item.getItemId()==R.id.action_configAcercade)
+		{
+			Intent intent = new Intent(this, Acerca.class);
+			startActivity(intent);
+			return true;
+		}
 		return super.onOptionsItemSelected(item);
 	}
     public void cargarPreferencias()
@@ -340,26 +349,21 @@ public void mostrarContenido(boolean negocios,boolean lista,boolean mapa,boolean
 	{
 		android.support.v4.app.FragmentManager myFM = getSupportFragmentManager();
 		SupportMapFragment myMAPF = (SupportMapFragment) myFM.findFragmentById(R.id.map);
-		LinearLayout acercade = (LinearLayout) findViewById(R.id.cancelCBTN);
 		LinearLayout mapaF = (LinearLayout) findViewById(R.id.mapa_frag);
 
 		mViewPager.setCurrentItem(tab.getPosition());
 		
-		if(myMAPF != null && acercade!= null && mapaF!=null)
+		if(myMAPF != null  && mapaF!=null)
 		{
 			if(tab.getPosition()==1)
 			{
 				
 				myMAPF.getView().setVisibility(View.GONE);
-				acercade.setVisibility(View.GONE);
-				acercade.setVisibility(View.VISIBLE);
 				mapaF.setVisibility(View.GONE);
 				mapaF.setVisibility(View.VISIBLE);
 			}
 			else
 			{
-				acercade.setVisibility(View.GONE);
-				acercade.setVisibility(View.VISIBLE);
 				mapaF.setVisibility(View.GONE);
 				mapaF.setVisibility(View.VISIBLE);
 				myMAPF.getView().setVisibility(View.VISIBLE);
@@ -400,7 +404,7 @@ public void mostrarContenido(boolean negocios,boolean lista,boolean mapa,boolean
 				Fragment f = new Mapa();
 				return f;
 			case 1:
-				return new AcercaDe();
+				return new Lista();
 			default:
 					return null;
 			}
@@ -420,7 +424,7 @@ public void mostrarContenido(boolean negocios,boolean lista,boolean mapa,boolean
 				case 0:
 					return "  Mapa";
 				case 1:
-					return "  Acerca de";
+					return "  Lista";
 				default:
 					return "  ";
 			}

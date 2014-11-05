@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Pa´ Que Te Ubiquen</string>
+    <string name="app_name">Pa´ que te Ubiquen</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="nomemp">Desarrolladora de Software y TI Palo Verde</string>
-	<string name="correo">eMail: paloverdelapaz2014@gmail.com</string>
-	<string name="telefono">Celular: 612 103 21 21</string>
+    <string name="nomemp">Desarrolladora de Software Palo Verde</string>
+	<string name="correo">paloverdelapaz2014@gmail.com</string>
+	<string name="telefono">612 103 21 21</string>
 	<string name="enviar">Enviar</string>
 	<string name="cancelar">Cancelar</string>
     <string name="comentar">Enviar comentario</string>
@@ -19,4 +19,5 @@
     <string name="ocultar_mostrar">Ocultar/Mostrar Lista</string>
     <string name="action_search">Buscar Comercios</string>
     <string name="action_settingsBA">Opciones Búsqueda Avanzada</string>
+     <string name="action_Acercade">Acerca de</string>
 </resources>
