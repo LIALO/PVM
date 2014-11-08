@@ -50,15 +50,9 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class Mapa extends Fragment
 {
-	private Negocios negEncontrado;
-	private TextView vnombre;
-	private TextView vdireccion;
-	private TextView vslogan;
-	private TextView vurl;
+
 	private ProgressDialog pDialogg;
-	private static List<Negocios> negList = new ArrayList<Negocios>();
-	private ListView listViewB;
-	private CustomListAdapter clAdapter;
+
 	BusquedaAvanzada ba =new BusquedaAvanzada() ;
 	
 	private RadioGroup rgDesplegarRB;
@@ -79,12 +73,11 @@ public class Mapa extends Fragment
 	private SeekBar sbDistancia;
 	private TextView tvDistancia;
 	private Button btGuardarBA;
-	private Button backVistaNeg;
 	
 	/// Variables busqueda avanzada
 	private static int Distancia;
 	private static int Precio;	
-	private static String DesplegarDatos;
+
 
 
     // flag for Internet connection status
@@ -107,7 +100,6 @@ public class Mapa extends Fragment
     String[] idComercios;
 	
 	private LinearLayout llc;
-	private LinearLayout lllst;
 	private LinearLayout llba;
 	private LinearLayout llv;
 	private LinearLayout llmapa;
@@ -181,15 +173,15 @@ public class Mapa extends Fragment
     {   
     	GPSTracker gpss = new GPSTracker(getActivity().getBaseContext());
     	CameraPosition camPos;
-    	if(gpss.canGetLocation)
+    	if(gpss.canGetLocation && gpss.getLatitude()!= 0 && gpss.getLongitude()!=0)
 	    {
 	        latitude = gpss.getLatitude();
 	        longitude = gpss.getLongitude();
 	        LatLng miPos = new LatLng(latitude, longitude);
 	    	camPos = new CameraPosition.Builder()
 	        .target(miPos)   //Centramos el mapa en Madrid
-	        .zoom(15)         //Establecemos el zoom en 19
-	        .bearing(45)      //Establecemos la orientación con el noreste arriba
+	        .zoom(13)         //Establecemos el zoom en 19
+	        .bearing(0)      //Establecemos la orientación con el noreste arriba
 	        .tilt(90)         //Bajamos el punto de vista de la cámara 70 grados
 	        .build();
 	    }
@@ -201,7 +193,7 @@ public class Mapa extends Fragment
         	camPos = new CameraPosition.Builder()
 	        .target(miPos)   //Centramos el mapa en Madrid
 	        .zoom(13)         //Establecemos el zoom en 19
-	        .bearing(45)      //Establecemos la orientación con el noreste arriba
+	        .bearing(0)      //Establecemos la orientación con el noreste arriba
 	        .tilt(90)         //Bajamos el punto de vista de la cámara 70 grados
 	        .build();
     	}
@@ -233,15 +225,6 @@ public class Mapa extends Fragment
     	sbDistancia = (SeekBar) getActivity().findViewById(R.id.sbDistancia);
 	    SharedPreferences prefs = getActivity().getBaseContext().getSharedPreferences("preferenciasMiApp", getActivity().getBaseContext().MODE_PRIVATE);
 	    SharedPreferences.Editor editor = prefs.edit();
-		rgDesplegarRB = (RadioGroup) getActivity().findViewById(R.id.rgDesplegarRB);
-		if(rgDesplegarRB.getCheckedRadioButtonId() ==R.id.rbLista)
-		{
-			editor.putString("DespliegueResultados", "Lista");
-		}
-		if(rgDesplegarRB.getCheckedRadioButtonId() ==R.id.rbMapa)
-		{
-			editor.putString("DespliegueResultados", "Mapa");
-		}
 	    editor.putBoolean("preferenciasGuardadas", true);
 	    editor.putString("Distancia", Integer.toString(sbDistancia.getProgress()));
 	    editor.putString("Precio", Integer.toString(sbPrecios.getProgress()));      
@@ -249,16 +232,13 @@ public class Mapa extends Fragment
 	    Toast.makeText(getActivity(), "Guardando preferencias", Toast.LENGTH_SHORT).show();
     }
     
-    
     //cargar configuración aplicación Android usando SharedPreferences
     public void cargarPreferencias()
     {     
       SharedPreferences prefs = getActivity().getBaseContext().getSharedPreferences("preferenciasMiApp", getActivity().getBaseContext().MODE_PRIVATE);
       Distancia = Integer.parseInt(prefs.getString("Distancia", "0"));
       Precio = Integer.parseInt(prefs.getString("Precio", "0"));
-      DesplegarDatos = prefs.getString("DespliegueResultados", "Mapa");
       preferenciasGuardadas = prefs.getBoolean("preferenciasGuardadas", false);
-      
     }
  ///////////////////////////////////////////////
     private void hidePDialog() {
@@ -272,7 +252,6 @@ public class Mapa extends Fragment
     	if(negocios)
     	{
     		llv.setVisibility(View.GONE);
-			lllst.setVisibility(View.GONE);
 			llmapa.setVisibility(View.GONE);
 			llba.setVisibility(View.GONE);
     		llc.setVisibility(View.VISIBLE);
@@ -283,14 +262,12 @@ public class Mapa extends Fragment
     		llc.setVisibility(View.GONE);
 			llmapa.setVisibility(View.GONE);
 			llba.setVisibility(View.GONE);
-			lllst.setVisibility(View.VISIBLE);
     	}
 
     	if(mapa)
     	{
     		llv.setVisibility(View.GONE);
     		llc.setVisibility(View.GONE);
-			lllst.setVisibility(View.GONE);
 			llba.setVisibility(View.GONE);
 			llmapa.setVisibility(View.VISIBLE);
     	}
@@ -298,14 +275,12 @@ public class Mapa extends Fragment
     	{
     		llv.setVisibility(View.GONE);
     		llc.setVisibility(View.GONE);
-			lllst.setVisibility(View.GONE);
 			llmapa.setVisibility(View.GONE);
 			llba.setVisibility(View.VISIBLE);
     	}
     	if(vista)
     	{
     		llc.setVisibility(View.GONE);
-			lllst.setVisibility(View.GONE);
 			llmapa.setVisibility(View.GONE);
 			llba.setVisibility(View.GONE);
     		llv.setVisibility(View.VISIBLE);
@@ -333,75 +308,7 @@ public class Mapa extends Fragment
 
 		}
 	}
-	public void CargarNegocios(JSONArray jsonArrayNegocios,int idIcono)
-	{
-		hidePDialog();
-		negList.clear();
-		// Parsing json
-		for (int i = 0; i < jsonArrayNegocios.length(); i++) 
-		{
-			try 
-			{
-				JSONObject obj = jsonArrayNegocios.getJSONObject(i);
-				if(Integer.parseInt(obj.getString("id_icono")) == Integer.parseInt( idComercios[idIcono]))
-				{
-					if(ba.distancia(latitude, longitude, Double.parseDouble( obj.getString("latitud")), Double.parseDouble( obj.getString("longitud")), Distancia) && ba.precio(obj.getJSONArray("menu"), Precio))
-					{
-						Negocios neg = new Negocios();
-						neg.setNombreNegocio(obj.getString("nombre_negocio"));
-						neg.setEslogan(obj.getString("mensaje"));
-						neg.setDireccion(obj.getString("calles"));
-						neg.setTelefono(obj.getString("telefono"));
-						neg.setTagsNegocio(obj.getString("tags"));
-						neg.setId_icono(Integer.parseInt(obj.getString("id_icono")));
-						neg.setLatitud(Double.parseDouble( obj.getString("latitud")));
-						neg.setLongitud(Double.parseDouble( obj.getString("longitud")));
-						neg.setThumbnailUrl(obj.getString("url_img"));
-						neg.setUrlNegocio(obj.getString("url_neg"));
-						//Menu es json array
-						JSONArray menuArry = obj.getJSONArray("menu");
-						ArrayList<String> menu = new ArrayList<String>();
-						if(menuArry.length()!=0)
-						{
-							for (int j = 0; j < menuArry.length(); j++) 
-							{
-								JSONObject itemM = menuArry.getJSONObject(j);
-								menu.add(itemM.getString("producto")+" "+itemM.getString("descripcion")+" "+itemM.getString("precio"));
-							}
-						}
-						neg.setMenu(menu);
-		 
-						//Menu es json array
-						JSONArray horarioArry = obj.getJSONArray("horarios");
-						ArrayList<String> horario = new ArrayList<String>();
-						if(horarioArry.length()!=0)
-						{
-							for (int j = 0; j < horarioArry.length(); j++) 
-							{
-								JSONObject itemH= horarioArry.getJSONObject(j);
-								horario.add(itemH.getString("dia")+" "+itemH.getString("hora_abre")+" "+itemH.getString("hora_cierra"));
-							}
-						}
-						neg.setHorarios(horario);
-						
-						// adding negocio to movies array
-						negList.add(neg);
-					}
-				}
 
-
-			} 
-			catch (JSONException e) 
-			{
-				e.printStackTrace();
-			}
-
-		}
-		// notifying list adapter about data changes
-		// so that it renders the list view with updated data
-		clAdapter.notifyDataSetChanged();
-
-	}
 	public void CargarNegociosMapa(JSONArray jsonArrayNegocios,int idIcono)
 	{
 		if(pDialogg!=null)
@@ -443,8 +350,6 @@ public class Mapa extends Fragment
 
 					}
 				}
-
-
 			} 
 			catch (JSONException e) 
 			{
@@ -460,11 +365,10 @@ public class Mapa extends Fragment
 	{
 			super.onStart();
 						
-			llc = (LinearLayout)getActivity().findViewById(R.id.list_view_contenedor);
-			lllst = (LinearLayout)getActivity().findViewById(R.id.llNegociosB);
+			llc = (LinearLayout)getActivity().findViewById(R.id.mapa_llTiposNegocios);
 			llmapa =(LinearLayout)getActivity().findViewById(R.id.contenedor_mapa);
-			llba = (LinearLayout)getActivity().findViewById(R.id.busquedaAvanzada);
-			llv=(LinearLayout)getActivity().findViewById(R.id.vistaNegocio);
+			llba = (LinearLayout)getActivity().findViewById(R.id.mapa_busquedaAvanzada);
+			llv=(LinearLayout)getActivity().findViewById(R.id.mapa_vistaNegocio);
 			mostrarContenido(true,false,false,false,false);
 
 			lvNegocios = (ListView) getActivity().findViewById(R.id.lvNegocios);
@@ -479,81 +383,26 @@ public class Mapa extends Fragment
 	  			////////////////////////////////// ListView Negocios ////////////////////////////////////////
 	  			////////////////////////////////////////////////////////////////////////////////////////////
 	  			cargarPreferencias();
-	  			
-	  			if(DesplegarDatos.equals("Lista"))
-	  			{
-	  				
-					JSONArray NegiociosApp;
+	  			mostrarContenido(false,false,true,false,false);
+	  			if(googleMap!= null)
+				{
+	  				googleMap.clear();
+					uno();
+					   
+		  			JSONArray NegiociosApp;
 					try 
 					{
 						NegiociosApp = new JSONArray(ba.leerNegocios(getActivity().getBaseContext(),"negocios.txt"));
-						CargarNegocios(NegiociosApp, position);
-						mostrarContenido(false,true,false,false,false);
+						CargarNegociosMapa(NegiociosApp, position);
 					} 
 					catch (JSONException e) {
 						e.printStackTrace();
-					} 
-	  			}
-	  			if(DesplegarDatos.equals("Mapa"))
-	  			{
-	  				mostrarContenido(false,false,true,false,false);
-	  				if(googleMap!= null)
-					{
-	  					googleMap.clear();
-					    uno();
-					    
-		  				JSONArray NegiociosApp;
-						try 
-						{
-							NegiociosApp = new JSONArray(ba.leerNegocios(getActivity().getBaseContext(),"negocios.txt"));
-							CargarNegociosMapa(NegiociosApp, position);
-						} 
-						catch (JSONException e) {
-							e.printStackTrace();
-						}
 					}
-	  			}
-	  			
+				}
 	  			////////////////////////////////////////////////////////////////////////////////////////////
 	          }
 	        });
-	        
-			listViewB = (ListView) getActivity().findViewById(R.id.lvNegociosB);
-			clAdapter = new CustomListAdapter(getActivity(), negList);
-			listViewB.setAdapter(clAdapter);
-			//Listener para en listview negocios.
-			listViewB.setOnItemClickListener(new OnItemClickListener() 
-	        {
-		          public void onItemClick(AdapterView<?> parent, View view,int position, long id) 
-		          { 
-		        	  
-		        	  vnombre = (TextView)getActivity().findViewById(R.id.vistaNom);
-		        	  vdireccion = (TextView)getActivity().findViewById(R.id.vistaDireccion);
-		        	  vslogan = (TextView)getActivity().findViewById(R.id.vistaSlog);
-		        	  vurl = (TextView)getActivity().findViewById(R.id.vistaUrlNegocio);
-
-		        	  negEncontrado = negList.get(position);
-		  			  vnombre.setText(negEncontrado.getNombreNegocio());
-		  			  vdireccion.setText(negEncontrado.getDireccion());
-		  			  vslogan.setText(negEncontrado.getEslogan());
-		  			  vurl.setText(negEncontrado.getUrlNegocio());
-		  	          // menu
-		  			  ControlTabla ct = new ControlTabla(getActivity());
-		  			  TableLayout tablam =(TableLayout)getActivity().findViewById(R.id.TablaM);
-		  			  tablam.removeAllViews();
-		  			  ct.Inicializa(tablam,"Menú",1);
-		  			  ct.AgregarRenglonM(negEncontrado.getMenu(), tablam);
-		  			  ct.AgregarRenglon("", tablam);
-		  			  //Horario
-		  			  TableLayout tablah = (TableLayout)getActivity().findViewById(R.id.TablaH);
-		  			  tablah.removeAllViews();
-		  			  ct.Inicializa(tablah,"Horario",3);
-		  			  ct.AgregarRenglonH(negEncontrado.getHorarios(), tablah);
-
-
-		  			  mostrarContenido(false,false,false,false,true);
-		          }
-		     });
+	     
 			/////////// Botones Busqueda Avanzada ////////////7
 			btGuardarBA = (Button)getActivity().findViewById(R.id.btGuardarBA);
 			btGuardarBA.setOnClickListener(new OnClickListener(){
@@ -566,15 +415,7 @@ public class Mapa extends Fragment
 			        }
 			 
 			    });
-			backVistaNeg = (Button)getActivity().findViewById(R.id.backVistaNeg);
-			backVistaNeg.setOnClickListener(new OnClickListener(){
-		        @Override
-		        public void onClick(View arg0) 
-		        {
-		        	mostrarContenido(false,true,false,false,false);
-		        }
-		 
-		    });
+
 			///////////////////////////////////////////////////
 			////// Seek Bars //////
 			sbDistancia = (SeekBar) getActivity().findViewById(R.id.sbDistancia);
@@ -641,7 +482,4 @@ public class Mapa extends Fragment
 			}
 		//////////////////////////////////////////
 	}
-
-
-
 }

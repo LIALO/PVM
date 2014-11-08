@@ -1,51 +1,50 @@
-<LinearLayout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/mapa_frag"
-    android:layout_width="fill_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    android:background="#FFFFFF"
+    android:background="#ffffff"
     android:orientation="vertical" >
 
-     <!-- List View Tipos de Negocios-->
-    <LinearLayout
-        android:id="@+id/mapa_llTiposNegocios"
+
+    <!-- List View Tipos de Negocios-->
+        <LinearLayout
+        android:id="@+id/lista_llTiposNegocios"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <!-- List View -->
-
         <ListView
-            android:id="@+id/lvNegocios"
+            android:id="@+id/lista_lvNegocios"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
         </ListView>
     </LinearLayout>
-
     
-    <!-- Contendor Mapa --> 
+  <!-- List View Negocios Encontrados -->  
     <LinearLayout
-        android:id="@+id/contenedor_mapa"
+        android:id="@+id/lista_llNegociosEncontrados"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#2C6700"
         android:orientation="vertical" >
 
-        <fragment
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        <ListView
+            android:id="@+id/lista_lvNegociosB"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:divider="@color/list_divider"
+            android:dividerHeight="1dp"
+            android:listSelector="@drawable/list_row_selector" >
+        </ListView>
     </LinearLayout>
+    
 
     <!-- Vista Configuraciones -->
     <ScrollView
         android:id="@+id/scrollView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
- 		
+
         <LinearLayout
-            android:id="@+id/mapa_busquedaAvanzada"
+            android:id="@+id/lista_busquedaAvanzada"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -70,14 +69,14 @@
                     android:layout_height="wrap_content" >
 
                     <TextView
-                        android:id="@+id/menuItems"
+                        android:id="@+id/lista_menuItems"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Distancia de Búsqueda:"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
                     <TextView
-                        android:id="@+id/tvDistancia"
+                        android:id="@+id/lista_tvDistancia"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingLeft="5dp"
@@ -87,7 +86,7 @@
 
                 </LinearLayout>
 			    <SeekBar
-                    android:id="@+id/sbDistancia"
+                    android:id="@+id/lista_sbDistancia"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -105,14 +104,14 @@
                     android:layout_height="wrap_content" >
 
                     <TextView
-                        android:id="@+id/horario"
+                        android:id="@+id/lista_horario"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Limite de Precio:"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
                     <TextView
-                        android:id="@+id/tvPrecio"
+                        android:id="@+id/lista_tvPrecio"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingLeft="5dp"
@@ -123,7 +122,7 @@
                 </LinearLayout>
 
                 <SeekBar
-                    android:id="@+id/sbPrecio"
+                    android:id="@+id/lista_sbPrecio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -138,20 +137,20 @@
                 android:orientation="horizontal" >
 
                 <Button
-                    android:id="@+id/btGuardarBA"
+                    android:id="@+id/lista_btGuardarBA"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Guardar"
                     android:padding="10dp"
                     android:textColor="#5aaca5"
-                     android:background="@drawable/rounded_corner2"  />
+                    android:background="@drawable/rounded_corner2"  />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
-<!-- Vista Completa del Negocio --> 
-<LinearLayout
-    android:id="@+id/mapa_vistaNegocio"
+    
+   <!-- Vista Completa del Negocio --> 
+    <LinearLayout
+    android:id="@+id/lista_vistaNegocio"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -159,7 +158,7 @@
   <ScrollView
       android:id="@+id/scrollView1"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content" >
+      android:layout_height="wrap_content" android:layout_weight="1">
 
       <LinearLayout
           android:layout_width="fill_parent"
@@ -168,27 +167,29 @@
           android:orientation="vertical">
 
           <com.android.volley.toolbox.NetworkImageView
-              android:id="@+id/vistaImg"
+              android:id="@+id/lista_vistaImg"
               android:layout_width="80dp"
               android:layout_height="80dp"
               android:layout_marginRight="8dp" />
 
           <TextView
-              android:id="@+id/vistaNom"
+              android:id="@+id/lista_vistaNom"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:textSize="@dimen/nombreNeg"
-              android:textStyle="bold" />
+              android:textStyle="bold" 
+              android:textColor="@color/vista"/>
 
           <TextView
-              android:id="@+id/vistaSlog"
+              android:id="@+id/lista_vistaSlog"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
               android:layout_marginTop="1dip"
+              android:textColor="@color/vista"
               android:textSize="@dimen/slogan" />
 
           <TextView
-              android:id="@+id/vistaDireccion"
+              android:id="@+id/lista_vistaDireccion"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
               android:layout_marginTop="5dp"
@@ -196,14 +197,14 @@
               android:textSize="@dimen/direccion" />
 
           <TextView
-              android:id="@+id/vistaTelefonoNegocio"
+              android:id="@+id/lista_vistaTelefonoNegocio"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:textColor="@color/vista"
               android:textSize="@dimen/telefono" />
 
 	   <TableLayout 
-	    android:id="@+id/TablaM"
+	    android:id="@+id/lista_TablaM"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
 	    android:stretchColumns="1" >
@@ -211,95 +212,21 @@
 		</TableLayout>
 
 	    <TableLayout 
-	    android:id="@+id/TablaH"
+	    android:id="@+id/lista_TablaH"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
 	    android:stretchColumns="1" >
-	 
-		    <TableRow
-		        android:id="@+id/SeparadorCabecera1"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content" >
-		 
-		        <FrameLayout
-		            android:id="@+id/LineaCabecera1"
-		            android:layout_width="fill_parent"
-		            android:layout_height="2dp"
-		            android:layout_span="3"
-		            android:background="#FFFFFF" >
-		        </FrameLayout>
-		    </TableRow>
-	    
-		    <TableRow
-		        android:id="@+id/TituloTabla1"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content" >	
-		            <TextView
-			            android:id="@+id/TituloHorario1"
-			            android:layout_width="wrap_content"
-			            android:layout_height="wrap_content"
-			            android:padding="10dp"
-			            android:text="Horario"
-			            android:textColor="#005500"
-			            android:textSize="26sp" />
-		    </TableRow>
-		    
-	        <TableRow
-		        android:id="@+id/SeparadorCabecera2"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content" >
-		 
-		        <FrameLayout
-		            android:id="@+id/LineaCabecera2"
-		            android:layout_width="fill_parent"
-		            android:layout_height="2dp"
-		            android:layout_span="3"
-		            android:background="#FFFFFF" >
-		        </FrameLayout>
-	        
-	   	 	</TableRow>
-	    
-		   <TableRow
-		        android:id="@+id/Cabecera2"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content" >
-		
-		        <TextView
-		            android:id="@+id/ColumnaDia"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:padding="15dp"
-		            android:text="Día"
-		            android:textColor="#005500"
-		            android:textSize="26sp" />
-		       
-		        <TextView
-		            android:id="@+id/ColumnaHoraA"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:layout_gravity="center_horizontal"
-		            android:padding="15dp"
-		            android:text="Hora que abre"
-		            android:textColor="#005500"
-		            android:textSize="26sp" />
-		 
-		        <TextView
-		            android:id="@+id/ColumnaHoraC"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:padding="15dp"
-		            android:text="Hora que cierra"
-		            android:textColor="#005500"
-		            android:textSize="26sp" />
-	
-		    </TableRow>
-	
+
 		</TableLayout>
-  
+
      </LinearLayout>
   </ScrollView>
+      
 
   
 
 </LinearLayout>
+    
 </LinearLayout>
+
+

@@ -47,8 +47,7 @@ public class CustomListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
  
         if (inflater == null)
-            inflater = (LayoutInflater) activity
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView == null)
             convertView = inflater.inflate(R.layout.list_row, null);
  
@@ -69,7 +68,15 @@ public class CustomListAdapter extends BaseAdapter {
         nomNeg.setText(n.getNombreNegocio());
         
         //tags
-        tags.setText("Qué ofrece: "+n.getTagsNegocio());
+        String ts[] = n.getTagsNegocio().split(","); String tag="";
+        for(int i =0;i<ts.length;i++)
+        {
+        	if(i==0)
+        		tag =ts[i];
+        	else
+        		tag = tag +", "+ts[i];
+        }
+        tags.setText("Qué ofrece: "+tag);
         
         // Slogan
         slogan.setText(n.getEslogan());

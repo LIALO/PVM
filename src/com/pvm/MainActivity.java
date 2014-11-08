@@ -27,12 +27,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.LayoutAnimationController;
-import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,18 +42,23 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 	private TextView tvPrecios;
 	private SeekBar sbDistancia;
 	private TextView tvDistancia;
-	private RadioButton radioMapa;
-	private RadioButton radioLista;
-	private LinearLayout llc;
-	private LinearLayout lllst;
-	private LinearLayout llba;
-	private LinearLayout llv;
-	private LinearLayout llmapa;
+	
+	private LinearLayout lista_llTN;
+	private LinearLayout lista_llNE;
+	private LinearLayout lista_BA;
+	private LinearLayout lista_vista;
+	
+	private LinearLayout mapa_llTN;
+	private LinearLayout mapa_CM;
+	private LinearLayout mapa_BA;
+	private LinearLayout mapa_vista;
 
+	ControlUbicacion cu= new ControlUbicacion(); 
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
 	// URL to get contacts JSON
 	private static String url = "http://paqueteubiquen.esy.es/json.json";
+	
 	Resources mResources;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -136,37 +136,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 		
 	}
 
-	
-	//BOTONES ACERCADE//////////////////////////
-	public void comentarButtonClicked(View view)
-	{	}
-	public void registroButtonClicked(View view)
-	{	}
-	public void enviarCButtonClicked(View view)
-	{	}
-	public void enviarRButtonClicked(View view)
-	{	}
-	public void cancelCButtonClicked(View view)
-	{	}
-	public void cancelRButtonClicked(View view)
-	{	}
-
-	/////////////////////////////////////////
-	//BOTONES MAPA//////////////////////////
-	public void hateButtonClicked(View view)
-	{	}
-	public void coffeButtonClicked(View view)
-	{	}
-	public void expendiosButtonClicked(View view)
-	{	}
-	public void baresButtonClicked(View view)
-	{	}
-	public void sushiButtonClicked(View view)
-	{	}
-	public void listViewClicked(View view)
-	{	}
-	public void omButtonClicked(View view){ 
-	}
 
 	/////////////////////////////////////////
 	public void asigna_icono(ActionBar.Tab tab)
@@ -186,110 +155,128 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 	
 	
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(Menu menu) 
+	{
 	    // Inflate the menu items for use in the action bar
 	    MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.main, menu);
 	    return super.onCreateOptionsMenu(menu);
 	}
-///////////////////////////////////////////////
-private void animar(boolean mostrar)
-{
-	AnimationSet set = new AnimationSet(true);
-	Animation animation = null;
-	if (mostrar)
-	{
-	//desde la esquina inferior derecha a la superior izquierda
-	animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
-	}
-	else
-	{    //desde la esquina superior izquierda a la esquina inferior derecha
-	animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 1.0f);
-	}
-	//duración en milisegundos
-	animation.setDuration(500);
-	set.addAnimation(animation);
-	LayoutAnimationController controller = new LayoutAnimationController(set, 0.25f);
-	
-	llc.setLayoutAnimation(controller);
-	llc.startAnimation(animation);
-}
-public void mostrarContenido(boolean negocios,boolean lista,boolean mapa,boolean opcAvanzadas,boolean vista)
-{
-	if(negocios)
-	{
-		llv.setVisibility(View.GONE);
-		lllst.setVisibility(View.GONE);
-		llmapa.setVisibility(View.GONE);
-		llba.setVisibility(View.GONE);
-		llc.setVisibility(View.VISIBLE);
-	}
-	if(lista)
-	{
-		llv.setVisibility(View.GONE);
-		llc.setVisibility(View.GONE);
-		llmapa.setVisibility(View.GONE);
-		llba.setVisibility(View.GONE);
-		lllst.setVisibility(View.VISIBLE);
-	}
 
-	if(mapa)
-	{
-		llv.setVisibility(View.GONE);
-		llc.setVisibility(View.GONE);
-		lllst.setVisibility(View.GONE);
-		llba.setVisibility(View.GONE);
-		llmapa.setVisibility(View.VISIBLE);
-	}
-	if(opcAvanzadas)
-	{
-		llv.setVisibility(View.GONE);
-		llc.setVisibility(View.GONE);
-		lllst.setVisibility(View.GONE);
-		llmapa.setVisibility(View.GONE);
-		llba.setVisibility(View.VISIBLE);
-	}
-	if(lista)
-	{
-		llc.setVisibility(View.GONE);
-		lllst.setVisibility(View.GONE);
-		llmapa.setVisibility(View.GONE);
-		llba.setVisibility(View.GONE);
-		llv.setVisibility(View.VISIBLE);
-	}
-	
-}
 /////////////////////////////////////////////////
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) 
 	{
-		llc = (LinearLayout)findViewById(R.id.list_view_contenedor);
-		lllst = (LinearLayout)findViewById(R.id.llNegociosB);
-		llba = (LinearLayout)findViewById(R.id.busquedaAvanzada);
-		llv = (LinearLayout)findViewById(R.id.vistaNegocio);
-		llmapa  = (LinearLayout)findViewById(R.id.contenedor_mapa);
+		lista_llTN = (LinearLayout)findViewById(R.id.lista_llTiposNegocios);
+		lista_llNE= (LinearLayout)findViewById(R.id.lista_llNegociosEncontrados);
+		lista_BA= (LinearLayout)findViewById(R.id.lista_busquedaAvanzada);
+		lista_vista=(LinearLayout)findViewById(R.id.lista_vistaNegocio);
+		
+		mapa_llTN = (LinearLayout)findViewById(R.id.mapa_llTiposNegocios);
+		mapa_CM= (LinearLayout)findViewById(R.id.contenedor_mapa);
+		mapa_BA= (LinearLayout)findViewById(R.id.mapa_busquedaAvanzada);
+		mapa_vista=(LinearLayout)findViewById(R.id.mapa_vistaNegocio);
+		
 		if (item.getItemId() == R.id.action_search) 
 		{
-	       	 if (llc.getVisibility() == View.GONE)
-	         {
-	             animar(true);
-	             mostrarContenido(true,false,false,false,false);	             
-	         }
-	       	 if(llba.getVisibility()==View.VISIBLE)
-	       	 {
-	       		 animar(true);
-	       		 mostrarContenido(true,false,false,false,false);
-	       	 }
+
+			if(cu.isTab()==true)
+			{
+				// estoy en lista
+				if(lista_vista.getVisibility()==View.VISIBLE)
+				{
+					lista_llTN.setVisibility(View.GONE);
+					lista_llNE.setVisibility(View.VISIBLE);
+					lista_BA.setVisibility(View.GONE);
+					lista_vista.setVisibility(View.GONE);
+				}
+				else
+				if(lista_llNE.getVisibility()==View.VISIBLE)
+				{
+					lista_llTN.setVisibility(View.VISIBLE);
+					lista_llNE.setVisibility(View.GONE);
+					lista_BA.setVisibility(View.GONE);
+					lista_vista.setVisibility(View.GONE);
+				}else
+				if(lista_BA.getVisibility()==View.VISIBLE)
+				{
+					lista_llTN.setVisibility(View.VISIBLE);
+					lista_llNE.setVisibility(View.GONE);
+					lista_BA.setVisibility(View.GONE);
+					lista_vista.setVisibility(View.GONE);
+				}
+			}
+			if(cu.isTab()==false)
+			{
+				// estoy en mapa
+				if(mapa_vista.getVisibility()==View.VISIBLE)
+				{
+					mapa_llTN.setVisibility(View.GONE);
+					mapa_CM.setVisibility(View.VISIBLE);
+					mapa_BA.setVisibility(View.GONE);
+					mapa_vista.setVisibility(View.GONE);
+				}
+				else
+				if(mapa_CM.getVisibility()==View.VISIBLE)
+				{
+					mapa_llTN.setVisibility(View.VISIBLE);
+					mapa_CM.setVisibility(View.GONE);
+					mapa_BA.setVisibility(View.GONE);
+					mapa_vista.setVisibility(View.GONE);
+				}else
+				if(mapa_BA.getVisibility()==View.VISIBLE)
+				{
+					mapa_llTN.setVisibility(View.VISIBLE);
+					mapa_CM.setVisibility(View.GONE);
+					mapa_BA.setVisibility(View.GONE);
+					mapa_vista.setVisibility(View.GONE);
+				}
+			}
 			return true;
 		}
 		if(item.getItemId()==R.id.action_configBA)
 		{
-	       	 if (llc.getVisibility() == View.VISIBLE || llmapa.getVisibility()==View.VISIBLE || lllst.getVisibility()==View.VISIBLE )
-	         {
-	       		cargarPreferencias();
-	       		mostrarContenido(false,false,false,true,false);
-	         }
 
+			if(cu.isTab()==true)
+			{
+				cargarPreferenciasL();
+				// estoy en lista
+				if(lista_BA.getVisibility() ==View.GONE)
+				{
+					lista_vista.setVisibility(View.GONE);
+					lista_llTN.setVisibility(View.GONE);
+					lista_llNE.setVisibility(View.GONE);
+					lista_BA.setVisibility(View.VISIBLE);
+				}
+				else
+				if(lista_BA.getVisibility() ==View.VISIBLE)
+				{
+					lista_llTN.setVisibility(View.VISIBLE);
+					lista_llNE.setVisibility(View.GONE);
+					lista_BA.setVisibility(View.GONE);
+					lista_vista.setVisibility(View.GONE);
+				}
+			}
+			if(cu.isTab()==false)
+			{
+				cargarPreferenciasM();
+				// estoy en mapa
+				if(mapa_BA.getVisibility() ==View.GONE)
+				{
+					mapa_vista.setVisibility(View.GONE);
+					mapa_llTN.setVisibility(View.GONE);
+					mapa_CM.setVisibility(View.GONE);
+					mapa_BA.setVisibility(View.VISIBLE);
+				}
+				else
+				if(mapa_BA.getVisibility() ==View.VISIBLE)
+				{
+					mapa_llTN.setVisibility(View.VISIBLE);
+					mapa_CM.setVisibility(View.GONE);
+					mapa_BA.setVisibility(View.GONE);
+					mapa_vista.setVisibility(View.GONE);
+				}
+			}
 			return true;
 		}
 		if(item.getItemId()==R.id.action_configAcercade)
@@ -300,7 +287,38 @@ public void mostrarContenido(boolean negocios,boolean lista,boolean mapa,boolean
 		}
 		return super.onOptionsItemSelected(item);
 	}
-    public void cargarPreferencias()
+    public void cargarPreferenciasL()
+    {
+		sbDistancia = (SeekBar) findViewById(R.id.lista_sbDistancia);
+		tvDistancia= (TextView) findViewById(R.id.lista_tvDistancia);
+		sbPrecios = (SeekBar) findViewById(R.id.lista_sbPrecio);
+		tvPrecios = (TextView) findViewById(R.id.lista_tvPrecio);
+		SharedPreferences prefs = getSharedPreferences("preferenciasMiApp", Context.MODE_PRIVATE);
+        
+		sbDistancia.setProgress(Integer.parseInt(prefs.getString("Distancia", "0")));
+		if(sbDistancia.getProgress()>=0 && sbDistancia.getProgress()<=10)
+			tvDistancia.setText("Cerca");
+		if(sbDistancia.getProgress()>10 && sbDistancia.getProgress()<=20)
+			tvDistancia.setText("No tan ejos");
+		if(sbDistancia.getProgress()>20 && sbDistancia.getProgress()<=30)
+			tvDistancia.setText("Lejos");
+		if(sbDistancia.getProgress()>30 && sbDistancia.getProgress()<40)
+			tvDistancia.setText("Muy lejos");
+		if(sbDistancia.getProgress()==40)
+			tvDistancia.setText("Todo");
+        
+        
+        sbPrecios.setProgress(Integer.parseInt(prefs.getString("Precio", "0")));
+        if( sbPrecios.getProgress()==50)
+        	tvPrecios.setText("Todo");
+        else
+        	tvPrecios.setText("$"+prefs.getString("Precio", "0"));
+        
+        
+        prefs.getBoolean("preferenciasGuardadas", false);
+      
+    }
+    public void cargarPreferenciasM()
     {
 		sbDistancia = (SeekBar) findViewById(R.id.sbDistancia);
 		tvDistancia= (TextView) findViewById(R.id.tvDistancia);
@@ -327,19 +345,6 @@ public void mostrarContenido(boolean negocios,boolean lista,boolean mapa,boolean
         else
         	tvPrecios.setText("$"+prefs.getString("Precio", "0"));
         
-    	radioMapa = (RadioButton)findViewById(R.id.rbMapa);
-    	radioLista = (RadioButton)findViewById(R.id.rbLista);
-    	String d = prefs.getString("DespliegueResultados", "");
-        if(d.equals("Mapa"))
-        {
-        	radioMapa.setChecked(true);
-        	radioLista.setChecked(false);
-        }
-        if(d.equals("Lista"))
-        {
-        	radioMapa.setChecked(false);
-        	radioLista.setChecked(true);
-        }
         
         prefs.getBoolean("preferenciasGuardadas", false);
       
@@ -347,28 +352,37 @@ public void mostrarContenido(boolean negocios,boolean lista,boolean mapa,boolean
 	@Override
 	public void onTabSelected(ActionBar.Tab tab,FragmentTransaction fragmentTransaction) 
 	{
+		lista_llTN = (LinearLayout)findViewById(R.id.lista_llTiposNegocios);
+		mapa_llTN = (LinearLayout)findViewById(R.id.mapa_llTiposNegocios);
+
+		
 		android.support.v4.app.FragmentManager myFM = getSupportFragmentManager();
 		SupportMapFragment myMAPF = (SupportMapFragment) myFM.findFragmentById(R.id.map);
 		LinearLayout mapaF = (LinearLayout) findViewById(R.id.mapa_frag);
-
-		mViewPager.setCurrentItem(tab.getPosition());
 		
+		mViewPager.setCurrentItem(tab.getPosition());
 		if(myMAPF != null  && mapaF!=null)
 		{
-			if(tab.getPosition()==1)
-			{
-				
-				myMAPF.getView().setVisibility(View.GONE);
-				mapaF.setVisibility(View.GONE);
-				mapaF.setVisibility(View.VISIBLE);
-			}
-			else
+			if(tab.getPosition() == 0)
 			{
 				mapaF.setVisibility(View.GONE);
 				mapaF.setVisibility(View.VISIBLE);
 				myMAPF.getView().setVisibility(View.VISIBLE);
+				//mapa_llTN.setVisibility(View.VISIBLE);
+				cu.setTab(false);
+
+			}
+			if(tab.getPosition() == 1)
+			{
+				cu.setTab(true);
+				
+				myMAPF.getView().setVisibility(View.GONE);
+				mapaF.setVisibility(View.GONE);
+				mapaF.setVisibility(View.VISIBLE);
+				//lista_llTN.setVisibility(View.VISIBLE);
 			}
 		}
+
 	}
 
 	@Override

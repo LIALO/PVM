@@ -36,7 +36,7 @@ public class ControlTabla
 	    FrameLayout linea_cabecera = new FrameLayout(activity);
 	    TableRow.LayoutParams linea_cabecera_params = new TableRow.LayoutParams(LayoutParams.MATCH_PARENT,alto);
 	    linea_cabecera_params.span = span;
-	    linea_cabecera.setBackgroundColor(Color.parseColor("#F333FF"));
+	    linea_cabecera.setBackgroundColor(Color.parseColor("#5aaca5"));
 	    separador_cabecera.addView(linea_cabecera, linea_cabecera_params);
 	    tabla.addView(separador_cabecera);
 	}
@@ -60,8 +60,8 @@ public class ControlTabla
 			       TextView columna = new TextView(activity);
 			       columna.setLayoutParams(new TableRow.LayoutParams( LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 			       columna.setText(ItemSplit[ii]);
-			       columna.setTextColor(Color.parseColor("#0055ff"));
-			       columna.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
+			       columna.setTextColor(Color.parseColor("#34495e"));
+			       columna.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
 			       columna.setGravity(Gravity.LEFT);
 			       columna.setPadding(15, 5, 5, 5);
 			       cabecera.addView(columna);
@@ -82,7 +82,7 @@ public class ControlTabla
 	    	TextView columna = new TextView(activity);
 			columna.setLayoutParams(new TableRow.LayoutParams( LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 			columna.setText(Dato);
-			columna.setTextColor(Color.parseColor("#0055ff"));
+			columna.setTextColor(Color.parseColor("#34495e"));
 			columna.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
 			columna.setGravity(Gravity.LEFT);
 			columna.setPadding(15, 5, 5, 5);
@@ -103,7 +103,7 @@ public class ControlTabla
 	    	TextView columna = new TextView(activity);
 			columna.setLayoutParams(new TableRow.LayoutParams( LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 			columna.setText(Item);
-			columna.setTextColor(Color.parseColor("#0055ff"));
+			columna.setTextColor(Color.parseColor("#34495e"));
 			columna.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
 			columna.setGravity(Gravity.LEFT);
 			columna.setPadding(15, 5, 5, 5);
