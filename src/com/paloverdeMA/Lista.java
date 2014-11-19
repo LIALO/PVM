@@ -1,4 +1,4 @@
-package com.pvm;
+package com.paloverdeMA;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,8 +13,10 @@ import com.customlistviewvolley.model.Negocios;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.pvm.R;
+import com.paloverdeMA.R;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -298,8 +300,20 @@ public class Lista extends Fragment
 			try 
 			{
 				JSONObject obj = jsonArrayNegocios.getJSONObject(i);
-				if(Integer.parseInt(obj.getString("id_icono")) == Integer.parseInt( idComercios[idIcono]))
+				if(Integer.parseInt(obj.getString("id_icono")) == Integer.parseInt(  idComercios[idIcono]))
 				{
+					GPSTracker gpss = new GPSTracker(getActivity().getBaseContext());
+					gpss.getLocation();
+			    	if(gpss.canGetLocation && gpss.getLatitude()!= 0 && gpss.getLongitude()!=0)
+				    {
+				        latitude = gpss.getLatitude();
+				        longitude = gpss.getLongitude();
+				    }
+			    	else
+			    	{
+			    		latitude = 24.1412461;
+			    		longitude  = -110.3119056;
+			    	}
 					if(ba.distancia(latitude, longitude, Double.parseDouble( obj.getString("latitud")), Double.parseDouble( obj.getString("longitud")), Distancia) && ba.precio(obj.getJSONArray("menu"), Precio))
 					{
 						Negocios neg = new Negocios();
@@ -359,6 +373,11 @@ public class Lista extends Fragment
 			}
 
 		}
+		if (negList.isEmpty())
+		{
+			Toast.makeText(getActivity(), "No se han encontrado "+comercios[idIcono]+" con los parametros de búsqueda establecidos", Toast.LENGTH_SHORT).show();
+			mostrarContenido(true,false,false,false,false);
+		}
 		// notifying list adapter about data changes
 		// so that it renders the list view with updated data
 		clAdapter.notifyDataSetChanged();
@@ -417,7 +436,7 @@ public class Lista extends Fragment
 	    editor.putString("Distancia", Integer.toString(sbDistancia.getProgress()));
 	    editor.putString("Precio", Integer.toString(sbPrecios.getProgress()));      
 	    editor.commit();
-	    Toast.makeText(getActivity(), "Guardando preferencias", Toast.LENGTH_SHORT).show();
+	    Toast.makeText(getActivity(), "Guardando configuración", Toast.LENGTH_SHORT).show();
     }
     
     

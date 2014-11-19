@@ -1,4 +1,5 @@
-package com.pvm;
+package com.paloverdeMA;
+import org.jasypt.util.text.BasicTextEncryptor;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,11 +28,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.LayoutAnimationController;
+import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener 
@@ -56,8 +61,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 	ControlUbicacion cu= new ControlUbicacion(); 
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
-	// URL to get contacts JSON
-	private static String url = "http://paqueteubiquen.esy.es/json.json";
+	// URL to get contacts JSONhttp://paqueteubiquen.com/
+	private static String url = "http://paqueteubiquen.com/json.json";
 	
 	Resources mResources;
 	@Override
@@ -99,6 +104,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 		// Showing progress dialog before making http request
 		pDialogg.setMessage("Bienvenido...\nCargando datos");
 		pDialogg.show();
+		String reln = ba.leerNegocios(getBaseContext(),"iconos.txt");
+		if(reln.equals(""))
+		{
+			ba.respaldarNegocios(ba.leerNegociosR(getBaseContext()),getApplicationContext(), "negocios.txt");
+			ba.respaldarNegocios(ba.leerIconosR(getBaseContext()), getApplicationContext(), "iconos.txt");
+		}
 		JsonObjectRequest negReq = new JsonObjectRequest(url,null, new Response.Listener<JSONObject>() 
 				{
 					@Override
@@ -106,10 +117,14 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 					{
 						try 
 						{
-							ba.respaldarNegocios(response.getJSONArray("negocios").toString(),getApplicationContext(), "negocios.txt");
-							ba.respaldarNegocios(response.getJSONArray("iconos").toString(), getApplicationContext(), "iconos.txt");
+							JSONObject mensaje = response.getJSONObject("mensaje");
+							String encriptado =decryptB( mensaje.getString("encriptado"));
+							JSONObject info = new JSONObject(encriptado);
+							
+							ba.respaldarNegocios(info.getJSONArray("negocios").toString(),getApplicationContext(), "negocios.txt");
+							ba.respaldarNegocios(info.getJSONArray("iconos").toString(), getApplicationContext(), "iconos.txt");
 
-						} catch (JSONException e) 
+						}catch (JSONException e) 
 						{
 							e.printStackTrace();
 						}
@@ -136,7 +151,21 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 		
 	}
 
-
+	public static String decryptB(String cadena) 
+	{ 
+		BasicTextEncryptor s = new BasicTextEncryptor(); 
+		s.setPassword("paloverde"); 
+		String devuelve = ""; 
+		try 
+		{ 
+			devuelve = s.decrypt(cadena); 
+		} 
+		catch (Exception e) 
+		{ 
+			devuelve = e.getMessage();
+		} 
+		return devuelve; 
+	} 
 	/////////////////////////////////////////
 	public void asigna_icono(ActionBar.Tab tab)
 	{
@@ -179,10 +208,15 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 		
 		if (item.getItemId() == R.id.action_search) 
 		{
+			
 
 			if(cu.isTab()==true)
 			{
 				// estoy en lista
+				if(lista_llTN.getVisibility() ==View.VISIBLE)
+				{
+					finish();
+				}else
 				if(lista_vista.getVisibility()==View.VISIBLE)
 				{
 					lista_llTN.setVisibility(View.GONE);
@@ -209,6 +243,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 			if(cu.isTab()==false)
 			{
 				// estoy en mapa
+				if(mapa_llTN.getVisibility() ==View.VISIBLE)
+				{
+					finish();
+				}else
 				if(mapa_vista.getVisibility()==View.VISIBLE)
 				{
 					mapa_llTN.setVisibility(View.GONE);
@@ -353,33 +391,40 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 	public void onTabSelected(ActionBar.Tab tab,FragmentTransaction fragmentTransaction) 
 	{
 		lista_llTN = (LinearLayout)findViewById(R.id.lista_llTiposNegocios);
+		lista_llNE= (LinearLayout)findViewById(R.id.lista_llNegociosEncontrados);
+		lista_BA= (LinearLayout)findViewById(R.id.lista_busquedaAvanzada);
+		lista_vista=(LinearLayout)findViewById(R.id.lista_vistaNegocio);
+		
 		mapa_llTN = (LinearLayout)findViewById(R.id.mapa_llTiposNegocios);
 
 		
 		android.support.v4.app.FragmentManager myFM = getSupportFragmentManager();
 		SupportMapFragment myMAPF = (SupportMapFragment) myFM.findFragmentById(R.id.map);
-		LinearLayout mapaF = (LinearLayout) findViewById(R.id.mapa_frag);
+		LinearLayout mapaF = (LinearLayout) findViewById(R.id.contenedor_mapa);
 		
 		mViewPager.setCurrentItem(tab.getPosition());
 		if(myMAPF != null  && mapaF!=null)
 		{
 			if(tab.getPosition() == 0)
-			{
-				mapaF.setVisibility(View.GONE);
+			{	
 				mapaF.setVisibility(View.VISIBLE);
+				mapaF.setVisibility(View.GONE);
 				myMAPF.getView().setVisibility(View.VISIBLE);
-				//mapa_llTN.setVisibility(View.VISIBLE);
+				mapa_llTN.setVisibility(View.VISIBLE);
 				cu.setTab(false);
 
 			}
 			if(tab.getPosition() == 1)
 			{
-				cu.setTab(true);
-				
 				myMAPF.getView().setVisibility(View.GONE);
 				mapaF.setVisibility(View.GONE);
 				mapaF.setVisibility(View.VISIBLE);
-				//lista_llTN.setVisibility(View.VISIBLE);
+				
+				cu.setTab(true);
+				lista_llTN.setVisibility(View.VISIBLE);
+				lista_llNE.setVisibility(View.GONE);
+				lista_BA.setVisibility(View.GONE);
+				lista_vista.setVisibility(View.GONE);
 			}
 		}
 

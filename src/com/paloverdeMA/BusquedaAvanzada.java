@@ -1,6 +1,7 @@
-package com.pvm;
+package com.paloverdeMA;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -8,6 +9,8 @@ import java.io.OutputStreamWriter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.paloverdeMA.R;
 
 import android.content.Context;
 import android.util.Log;
@@ -114,6 +117,55 @@ public class BusquedaAvanzada
 	        	 linea = brin.readLine();
 	         }	
 		    brin.close();
+		    return todo;
+		}
+		catch (Exception ex)
+		{
+		    Log.e("Ficheros", "Error al leer fichero desde memoria interna");
+		    return "";
+		}
+	}
+	
+	public String leerNegociosR(Context c)
+	{
+		String linea = "";
+		String todo = "";
+		try
+		{
+			InputStream fraw =  c.getResources().openRawResource(R.raw.negocios);
+				 
+			BufferedReader brin = new BufferedReader(new InputStreamReader(fraw));
+		    linea = brin.readLine();
+	         while (linea != null) 
+	         {
+	        	 todo = todo + linea + " ";
+	        	 linea = brin.readLine();
+	         }	
+		    fraw.close();
+		    return todo;
+		}
+		catch (Exception ex)
+		{
+		    Log.e("Ficheros", "Error al leer fichero desde memoria interna");
+		    return "";
+		}
+	}
+	public String leerIconosR(Context c)
+	{
+		String linea = "";
+		String todo = "";
+		try
+		{
+			InputStream fraw =  c.getResources().openRawResource(R.raw.iconnos);
+				 
+			BufferedReader brin = new BufferedReader(new InputStreamReader(fraw));
+		    linea = brin.readLine();
+	         while (linea != null) 
+	         {
+	        	 todo = todo + linea + " ";
+	        	 linea = brin.readLine();
+	         }	
+		    fraw.close();
 		    return todo;
 		}
 		catch (Exception ex)

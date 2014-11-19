@@ -1,9 +1,12 @@
-package com.pvm;
+package com.paloverdeMA;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager.LayoutParams;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -43,6 +46,29 @@ public class ControlTabla
 	public void AgregarRenglonH(ArrayList<String> Datos,TableLayout tabla)
 	{
 	   
+		Calendar curDate = Calendar.getInstance();
+		int dia = curDate.get(Calendar.DAY_OF_WEEK);
+		String dias ="";
+		if(dia==1)
+			dias="Domingo";
+		else
+			if(dia==2)
+				dias="Lunes";
+			else
+				if(dia==3)
+					dias="Martes";
+				else
+					if(dia==4)
+						dias="Miércoles";
+					else
+						if(dia==5)
+							dias="Jueves";
+						else
+							if(dia==6)
+								dias="Viernes";
+							else
+								if(dia==7)
+									dias="Sábado";
 	 
 	    for (int i = 0;i<Datos.size();i++)
 	    {
@@ -61,6 +87,11 @@ public class ControlTabla
 			       columna.setLayoutParams(new TableRow.LayoutParams( LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 			       columna.setText(ItemSplit[ii]);
 			       columna.setTextColor(Color.parseColor("#34495e"));
+			       if(ItemSplit[0].equals(dias))
+			       {
+			    	   columna.setBackgroundDrawable(new ColorDrawable(Color.rgb(90,172,165)));
+			    	   columna.setTextColor(Color.parseColor("#ffffff"));
+			       }
 			       columna.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
 			       columna.setGravity(Gravity.LEFT);
 			       columna.setPadding(15, 5, 5, 5);

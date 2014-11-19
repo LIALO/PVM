@@ -1,16 +1,17 @@
-package com.pvm;
+package com.paloverdeMA;
 
 
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.customlistviewvolley.adater.CustomListAdapter;
+
 import com.customlistviewvolley.model.Negocios;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,9 +27,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.pvm.R;
+import com.paloverdeMA.R;
 
-import android.app.ProgressDialog;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -40,7 +40,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TableLayout;
@@ -50,15 +49,24 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class Mapa extends Fragment
 {
-
-	private ProgressDialog pDialogg;
+	
+	// Variables para la visa del negocio
+	private Negocios negEncontrado;
+	private TextView vnombre;
+	private TextView vdireccion;
+	private TextView vslogan;
+	private TextView vtelefono;
+	//variables usadas para gestionar los marcadores asi como si correspondiente informacion 
+    private ArrayList<Negocios> mMyMarkersArray = new ArrayList<Negocios>();
+    private HashMap<Marker, Negocios> mMarkersHashMap = new HashMap<Marker, Negocios>();
+    Resources mResources;
+	///////////////////////////////////////////////////////////////////////////////////////
 
 	BusquedaAvanzada ba =new BusquedaAvanzada() ;
-	
-	private RadioGroup rgDesplegarRB;
+
 	
 	boolean preferenciasGuardadas;
-
+	boolean vacio;
 	JSONObject res;
 	// List view
 	private ListView lvNegocios;
@@ -124,7 +132,8 @@ public class Mapa extends Fragment
 			String reln = ba.leerNegocios(getActivity().getBaseContext(),"iconos.txt");
 			if(reln.equals(""))
 			{
-				comercios =getResources().getStringArray(R.array.tipoNegocios);
+				//comercios =getResources().getStringArray(R.array.tipoNegocios);
+				CargarIconos(new JSONArray(reln));
 				Toast.makeText(getActivity(), "El archivo de respaldo no existe. \n"
 						+ "Intente iniciar la aplicación con una conexión a Internet para crearlo.", Toast.LENGTH_SHORT).show();
 			}
@@ -170,8 +179,8 @@ public class Mapa extends Fragment
         googleMap.getUiSettings().setZoomGesturesEnabled(true);
     }
     private void posicionaCamera()
-    {   
-    	GPSTracker gpss = new GPSTracker(getActivity().getBaseContext());
+    {   GPSTracker gpss = new GPSTracker(getActivity().getBaseContext());
+    	gpss.getLocation();
     	CameraPosition camPos;
     	if(gpss.canGetLocation && gpss.getLatitude()!= 0 && gpss.getLongitude()!=0)
 	    {
@@ -180,7 +189,7 @@ public class Mapa extends Fragment
 	        LatLng miPos = new LatLng(latitude, longitude);
 	    	camPos = new CameraPosition.Builder()
 	        .target(miPos)   //Centramos el mapa en Madrid
-	        .zoom(13)         //Establecemos el zoom en 19
+	        .zoom(15)         //Establecemos el zoom en 19
 	        .bearing(0)      //Establecemos la orientación con el noreste arriba
 	        .tilt(90)         //Bajamos el punto de vista de la cámara 70 grados
 	        .build();
@@ -192,9 +201,9 @@ public class Mapa extends Fragment
     		LatLng miPos = new LatLng(latitude, longitude);
         	camPos = new CameraPosition.Builder()
 	        .target(miPos)   //Centramos el mapa en Madrid
-	        .zoom(13)         //Establecemos el zoom en 19
+	        .zoom(14)         //Establecemos el zoom en 19
 	        .bearing(0)      //Establecemos la orientación con el noreste arriba
-	        .tilt(90)         //Bajamos el punto de vista de la cámara 70 grados
+	        .tilt(180)         //Bajamos el punto de vista de la cámara 70 grados
 	        .build();
     	}
 		CameraUpdate camUpd3 = CameraUpdateFactory.newCameraPosition(camPos);
@@ -218,7 +227,7 @@ public class Mapa extends Fragment
             }
         //}
     }
-// //////////////////////Preferencias///////////////
+    // //////////////////////Preferencias///////////////
     //guardar configuración aplicación Android usando SharedPreferences
     public void guardarPreferencias(){
     	sbPrecios = (SeekBar) getActivity().findViewById(R.id.sbPrecio);
@@ -229,7 +238,7 @@ public class Mapa extends Fragment
 	    editor.putString("Distancia", Integer.toString(sbDistancia.getProgress()));
 	    editor.putString("Precio", Integer.toString(sbPrecios.getProgress()));      
 	    editor.commit();
-	    Toast.makeText(getActivity(), "Guardando preferencias", Toast.LENGTH_SHORT).show();
+	    Toast.makeText(getActivity(), "Guardando configuración", Toast.LENGTH_SHORT).show();
     }
     
     //cargar configuración aplicación Android usando SharedPreferences
@@ -240,13 +249,8 @@ public class Mapa extends Fragment
       Precio = Integer.parseInt(prefs.getString("Precio", "0"));
       preferenciasGuardadas = prefs.getBoolean("preferenciasGuardadas", false);
     }
- ///////////////////////////////////////////////
-    private void hidePDialog() {
-		if (pDialogg != null) {
-			pDialogg.dismiss();
-			pDialogg = null;
-		}
-	}
+    ///////////////////////////////////////////////
+
     public void mostrarContenido(boolean negocios,boolean lista,boolean mapa,boolean opcAvanzadas,boolean vista)
     {
     	if(negocios)
@@ -311,20 +315,9 @@ public class Mapa extends Fragment
 
 	public void CargarNegociosMapa(JSONArray jsonArrayNegocios,int idIcono)
 	{
-		if(pDialogg!=null)
-		{
-			// Showing progress dialog before making http request
-			pDialogg.setMessage("Cargando...");
-			pDialogg.show();
-		}
-		else
-		{
-			pDialogg = new ProgressDialog(getActivity());
-			// Showing progress dialog before making http request
-			pDialogg.setMessage("Cargando...");
-			pDialogg.show();
-
-		}
+		vacio = true;
+		mMyMarkersArray.clear();
+		
 		// Parsing json
 		for (int i = 0; i < jsonArrayNegocios.length(); i++) 
 		{
@@ -332,21 +325,55 @@ public class Mapa extends Fragment
 			{
 				JSONObject obj = jsonArrayNegocios.getJSONObject(i);
 				if(Integer.parseInt(obj.getString("id_icono")) == Integer.parseInt( idComercios[idIcono]))
-				{
-					if(ba.distancia(latitude, longitude, Double.parseDouble( obj.getString("latitud")), Double.parseDouble( obj.getString("longitud")), Distancia) && ba.precio(obj.getJSONArray("menu"), Precio))
+				{GPSTracker gpss = new GPSTracker(getActivity().getBaseContext());
+					gpss.getLocation();
+					if(ba.distancia(gpss.getLatitude(), gpss.getLongitude(), Double.parseDouble( obj.getString("latitud")), Double.parseDouble( obj.getString("longitud")), Distancia) && ba.precio(obj.getJSONArray("menu"), Precio))
 					{
-						final MarkerOptions marker = new MarkerOptions().position(new LatLng(Double.parseDouble( obj.getString("latitud")), Double.parseDouble( obj.getString("longitud"))));
-				        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-				        marker.title(obj.getString("nombre_negocio"));
-				        marker.snippet(obj.getString("mensaje"));
-				            
-				        handler.post(new Runnable() 
-				        {
-				        	public void run() 
+						Negocios neg = new Negocios();
+						neg.setNombreNegocio(obj.getString("nombre_negocio"));
+						neg.setEslogan(obj.getString("mensaje"));
+						neg.setDireccion(obj.getString("calles"));
+						neg.setTelefono(obj.getString("telefono"));
+						neg.setTagsNegocio(obj.getString("tags"));
+						neg.setId_icono(Integer.parseInt(obj.getString("id_icono")));
+						neg.setLatitud(Double.parseDouble( obj.getString("latitud")));
+						neg.setLongitud(Double.parseDouble( obj.getString("longitud")));
+						neg.setThumbnailUrl(obj.getString("url_img"));
+						neg.setUrlNegocio(obj.getString("url_neg"));
+						//Menu es json array
+						JSONArray menuArry = obj.getJSONArray("menu");
+						ArrayList<String> menu = new ArrayList<String>();
+						if(menuArry.length()!=0)
+						{
+							for (int j = 0; j < menuArry.length(); j++) 
 							{
-								googleMap.addMarker(marker);
+								JSONObject itemM = menuArry.getJSONObject(j);
+								menu.add(itemM.getString("producto")+" "+itemM.getString("descripcion")+" "+itemM.getString("precio"));
 							}
-						});
+						}
+						neg.setMenu(menu);
+		 
+						//Menu es json array
+						JSONArray horarioArry = obj.getJSONArray("horarios");
+						ArrayList<String> horario = new ArrayList<String>();
+						if(horarioArry.length()!=0)
+						{
+							for (int j = 0; j < horarioArry.length(); j++) 
+							{
+								JSONObject itemH= horarioArry.getJSONObject(j);
+								
+								String ha[] = itemH.getString("hora_abre").split(":");
+								String haa = ha[0]+":"+ha[1];
+								
+								String ma[] = itemH.getString("hora_cierra").split(":");
+								String maa = ma[0]+":"+ma[1];
+								
+								horario.add(itemH.getString("dia")+" "+haa+" "+maa);
+							}
+						}
+						neg.setHorarios(horario);
+						mMyMarkersArray.add(neg);
+				        vacio = false;
 
 					}
 				}
@@ -357,8 +384,48 @@ public class Mapa extends Fragment
 			}
 
 		}
-		hidePDialog();
+		
+		plotMarkers(mMyMarkersArray);
+		if (vacio)
+		{
+			Toast.makeText(getActivity(), "No se han encontrado "+comercios[idIcono]+" con los parametros de búsqueda establecidos", Toast.LENGTH_SHORT).show();
+			mostrarContenido(true,false,false,false,false);
+		}
 	}
+	
+	private void plotMarkers(ArrayList<Negocios> markers)
+    {
+		mMarkersHashMap.clear();
+        if(markers.size() > 0)
+        {
+            for (Negocios myMarker : markers)
+            {
+
+                // Create user marker with custom icon and other options
+                MarkerOptions markerOption = new MarkerOptions().position(new LatLng(myMarker.getLatitud(), myMarker.getLongitud()));
+                markerOption.icon(BitmapDescriptorFactory.fromResource(manageMarkerIcon(myMarker.getId_icono())));
+                Marker currentMarker = googleMap.addMarker(markerOption);
+                mMarkersHashMap.put(currentMarker, myMarker);
+
+            }
+        }
+    }
+	
+	private int manageMarkerIcon(int markerIcon)
+    {
+		
+        if (markerIcon ==1)
+            return R.drawable.hate;
+        else if(markerIcon==2)
+            return R.drawable.taco;
+        else if(markerIcon==3)
+            return R.drawable.expendio;
+        else if(markerIcon==4)
+            return R.drawable.bar;
+        else
+            return (int) BitmapDescriptorFactory.HUE_RED;
+    }
+	
     ////////////////////////////////////////7
 	@Override
 	public void onStart() 
@@ -469,13 +536,33 @@ public class Mapa extends Fragment
 		        googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {
 		            public boolean onMarkerClick(Marker marker) 
 		            {
-		                Toast.makeText(
-		                    getActivity(),
-		                    "Latitud:\n" +
-		                    marker.getPosition().latitude+
-		                    "\nLongitud:\n"+marker.getPosition().longitude,
-		                    Toast.LENGTH_SHORT).show();
-		
+		                negEncontrado = mMarkersHashMap.get(marker);
+		                if(negEncontrado!=null)
+		                {
+			                vnombre = (TextView)getActivity().findViewById(R.id.vistaNom);
+				        	vdireccion = (TextView)getActivity().findViewById(R.id.vistaDireccion);
+				        	vslogan = (TextView)getActivity().findViewById(R.id.vistaSlog);
+				        	vtelefono = (TextView)getActivity().findViewById(R.id.vistaTelefonoNegocio);
+				        	
+				        	vnombre.setText(negEncontrado.getNombreNegocio());
+				  			vdireccion.setText(negEncontrado.getDireccion());
+				  			vslogan.setText(negEncontrado.getEslogan());
+				  			vtelefono.setText(negEncontrado.getUrlNegocio());
+				  	          // menu
+				  			ControlTabla ct = new ControlTabla(getActivity());
+				  			TableLayout tablam =(TableLayout)getActivity().findViewById(R.id.TablaM);
+				  			tablam.removeAllViews();
+				  		  		ct.Inicializa(tablam,"Menú",1);
+				  			ct.AgregarRenglonM(negEncontrado.getMenu(), tablam);
+				  			ct.AgregarRenglon("", tablam);
+				  			  //Horario
+				  			TableLayout tablah = (TableLayout)getActivity().findViewById(R.id.TablaH);
+				  			tablah.removeAllViews();
+				  			ct.Inicializa(tablah,"Horario",3);
+				  			ct.AgregarRenglonH(negEncontrado.getHorarios(), tablah);
+
+				  			  mostrarContenido(false,false,false,false,true);
+		                }
 		                return false;
 		            }
 		        });

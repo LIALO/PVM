@@ -1,4 +1,4 @@
-package com.pvm;
+package com.paloverdeMA;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

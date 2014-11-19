@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.pvm"
+    package="com.paloverdeMA"
     android:versionCode="1"
     android:versionName="1.0" >
 
     <permission
-        android:name="com.pvm.permission.MAPS_RECEIVE"
+        android:name="com.paloverdeMA.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
-   <uses-permission android:name="com.pvm.permission.MAPS_RECEIVE" />
+   <uses-permission android:name="com.paloverdeMA.permission.MAPS_RECEIVE" />
     
     <uses-sdk
         android:minSdkVersion="10"
@@ -21,6 +21,8 @@
     <!-- Required to show current location -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_GPS">
+	</uses-permission>
  
     <!-- Required OpenGL ES 2.0. for Maps V2 -->
     <uses-feature
@@ -34,7 +36,7 @@
         android:label="@string/app_name"
         android:theme="@style/ThemePersonalizado" >
         <activity
-            android:name="com.pvm.MainActivity"
+            android:name="com.paloverdeMA.MainActivity"
             android:label="@string/app_name"
             android:configChanges="orientation"
             android:theme="@style/ThemePersonalizado" android:uiOptions="splitActionBarWhenNarrow" >
@@ -47,13 +49,13 @@
             android:name="android.support.UI_OPTIONS"
             android:value="splitActionBarWhenNarrow" />
         </activity>
-		<activity  android:name="com.pvm.Acerca"
+		<activity  android:name="com.paloverdeMA.Acerca"
 		    android:label="@string/app_name"
 		    android:theme="@style/ThemePersonalizado"> </activity>
   		<!-- Goolge API Key -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyAs7dSKAZFeuKB67ZQypraty57CJc1kBqY" />
+            android:value="AIzaSyAFW50UkdNVa_hzv8DKmxZnsvGSDAC8FG4" />
         <meta-data android:name="com.google.android.gms.version"
                    android:value="@integer/google_play_services_version" />
 
