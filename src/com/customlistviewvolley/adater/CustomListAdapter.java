@@ -4,16 +4,20 @@ import com.paloverdeMA.R;
 import com.customlistviewvolley.app.AppController;
 import com.customlistviewvolley.model.Negocios;
  
+
 import java.util.List;
  
+
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
  
+
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
  
@@ -22,7 +26,7 @@ public class CustomListAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private List<Negocios> negItems;
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
- 
+
     public CustomListAdapter(Activity activity, List<Negocios> negItems) {
         this.activity = activity;
         this.negItems = negItems;
@@ -60,9 +64,32 @@ public class CustomListAdapter extends BaseAdapter {
  
         // getting market data for the row
         Negocios n = negItems.get(position);
- 
+        int  idIc = n.getId_icono();
         // thumbnail image
-        thumbNail.setImageUrl(n.getThumbnailUrl(), imageLoader);
+        if(n.getThumbnailUrl().equals(""))
+        {
+        	if(idIc==1)
+        	{
+        		thumbNail.setBackgroundResource(R.drawable.haten);
+        	}
+        	else
+        		if(idIc==2)
+        		{
+        			thumbNail.setBackgroundResource(R.drawable.tacon);
+        		}
+        		else
+        			if(idIc==3)
+        			{
+        				thumbNail.setBackgroundResource(R.drawable.expendion);
+        			}
+        			else
+        				if(idIc==8)
+        				{
+        					thumbNail.setBackgroundResource(R.drawable.barn);
+        				}
+        }
+        else
+        	thumbNail.setImageUrl(n.getThumbnailUrl(), imageLoader);
 
         //nombre negocio
         nomNeg.setText(n.getNombreNegocio());

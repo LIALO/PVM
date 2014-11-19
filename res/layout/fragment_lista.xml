@@ -169,34 +169,50 @@
           android:layout_height="wrap_content"
           android:padding="8dp" 
           android:orientation="vertical">
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" >
 
-          <com.android.volley.toolbox.NetworkImageView
-              android:id="@+id/lista_vistaImg"
-              android:layout_width="80dp"
-              android:layout_height="80dp"
-              android:layout_marginRight="8dp" />
+	       <com.android.volley.toolbox.NetworkImageView
+	            android:id="@+id/lista_vistaImg"
+	            android:layout_width="80dp"
+	            android:layout_height="80dp"
+	            android:layout_marginRight="8dp" />
+	        <LinearLayout
+	            android:layout_width="wrap_content"
+	            android:layout_height="match_parent"
+	            android:orientation="vertical" >
 
-          <TextView
-              android:id="@+id/lista_vistaNom"
+	            <TextView
+	                android:id="@+id/lista_vistaNom"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:text="Nombre"
+	                android:textColor="@color/vista"
+	                android:textSize="@dimen/nombreNeg"
+	                android:textStyle="bold" />
+
+	            <TextView
+	                android:id="@+id/lista_vistaSlog"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_marginTop="1dip"
+	                android:text="Slogan"
+	                android:textColor="@color/vista"
+	                android:textSize="@dimen/slogan" />
+
+	        </LinearLayout>
+
+
+
+	    </LinearLayout>
+
+	           <TextView
+              android:id="@+id/lista_vistaDireccion"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:textSize="@dimen/nombreNeg"
-              android:textStyle="bold" 
-              android:textColor="@color/vista"/>
-
-          <TextView
-              android:id="@+id/lista_vistaSlog"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="1dip"
-              android:textColor="@color/vista"
-              android:textSize="@dimen/slogan" />
-
-          <TextView
-              android:id="@+id/lista_vistaDireccion"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
               android:layout_marginTop="5dp"
+              android:text="Direccion"
               android:textColor="@color/vista"
               android:textSize="@dimen/direccion" />
 
@@ -204,6 +220,7 @@
               android:id="@+id/lista_vistaTelefonoNegocio"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
+              android:text="Telefono"
               android:textColor="@color/vista"
               android:textSize="@dimen/telefono" />
 
@@ -222,7 +239,6 @@
 	    android:stretchColumns="1" >
 
 		</TableLayout>
-
      </LinearLayout>
   </ScrollView>
       

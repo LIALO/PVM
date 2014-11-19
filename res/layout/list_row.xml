@@ -1,51 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content" android:padding="5dp">
- 
+    android:layout_height="wrap_content" android:padding="3dp" >
+
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" 
-        
-        android:background="@drawable/rounded_corner">
-        
-        <com.android.volley.toolbox.NetworkImageView
-	        android:id="@+id/vistaImg"
-	        android:layout_width="80dp"
-	        android:layout_height="80dp"
-	        android:layout_alignParentLeft="true"
-	        android:layout_marginRight="8dp" />
- 
-	    <TextView
-	        android:id="@+id/vistaNom"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignTop="@+id/vistaImg"
-	        android:layout_toRightOf="@+id/vistaImg"
-	        android:textSize="@dimen/nombreNeg"
-	        android:textStyle="bold" android:textColor="#5aaca5" />
-	
-	
-	    <TextView
-	        android:id="@+id/slogan"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@id/vistaNom"
-	        android:layout_marginTop="2dip"
-	        android:layout_toRightOf="@+id/vistaImg"
-	        android:textSize="@dimen/slogan" android:textColor="#5aaca5"/>
-	
-	    <TextView
-	        android:id="@+id/tags"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@id/slogan"
-	        android:layout_marginTop="5dp"
-	        android:layout_toRightOf="@+id/vistaImg"
-	        android:textColor="#5aaca5"
-	        android:textSize="@dimen/telefono" />
-        
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/rounded_corner"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/vistaImg"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginRight="8dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/vistaNom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre"
+                    android:textColor="#5aaca5"
+                    android:textSize="@dimen/nombreNeg"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/slogan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="slogan"
+                    android:textColor="#5aaca5"
+                    android:textSize="@dimen/slogan" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tags"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="tags"
+            android:textColor="#5aaca5"
+            android:textSize="12dp" />
+
     </LinearLayout>
  
 </RelativeLayout>

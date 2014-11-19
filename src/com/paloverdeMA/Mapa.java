@@ -7,10 +7,17 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 
+
+
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
+import com.customlistviewvolley.app.AppController;
 import com.customlistviewvolley.model.Negocios;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+
 
 
 import org.json.JSONArray;
@@ -543,6 +550,37 @@ public class Mapa extends Fragment
 				        	vdireccion = (TextView)getActivity().findViewById(R.id.vistaDireccion);
 				        	vslogan = (TextView)getActivity().findViewById(R.id.vistaSlog);
 				        	vtelefono = (TextView)getActivity().findViewById(R.id.vistaTelefonoNegocio);
+				        	NetworkImageView thumbNail = (NetworkImageView) getActivity().findViewById(R.id.vistaImg);
+				            int  idIc = negEncontrado.getId_icono();
+				            if(negEncontrado.getThumbnailUrl().equals(""))
+				            {
+				            	if(idIc==1)
+				            	{
+				            		thumbNail.setBackgroundResource(R.drawable.haten);
+				            	}
+				            	else
+				            		if(idIc==2)
+				            		{
+				            			thumbNail.setBackgroundResource(R.drawable.tacon);
+				            		}
+				            		else
+				            			if(idIc==3)
+				            			{
+				            				thumbNail.setBackgroundResource(R.drawable.expendion);
+				            			}
+				            			else
+				            				if(idIc==8)
+				            				{
+				            					thumbNail.setBackgroundResource(R.drawable.barn);
+				            				}
+				            }
+				            else
+				            {
+				            	ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+				            	thumbNail.setImageUrl(negEncontrado.getThumbnailUrl(), imageLoader);
+				            }
+				            
+
 				        	
 				        	vnombre.setText(negEncontrado.getNombreNegocio());
 				  			vdireccion.setText(negEncontrado.getDireccion());

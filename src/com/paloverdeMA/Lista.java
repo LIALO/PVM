@@ -8,7 +8,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.customlistviewvolley.adater.CustomListAdapter;
+import com.customlistviewvolley.app.AppController;
 import com.customlistviewvolley.model.Negocios;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -202,6 +205,37 @@ public class Lista extends Fragment
 	  			  vdireccion.setText(negEncontrado.getDireccion());
 	  			  vslogan.setText(negEncontrado.getEslogan());
 	  			  vtelefono.setText(negEncontrado.getUrlNegocio());
+	  			  
+		        	NetworkImageView thumbNail = (NetworkImageView) getActivity().findViewById(R.id.lista_vistaImg);
+		            int  idIc = negEncontrado.getId_icono();
+		            if(negEncontrado.getThumbnailUrl().equals(""))
+		            {
+		            	if(idIc==1)
+		            	{
+		            		thumbNail.setBackgroundResource(R.drawable.haten);
+		            	}
+		            	else
+		            		if(idIc==2)
+		            		{
+		            			thumbNail.setBackgroundResource(R.drawable.tacon);
+		            		}
+		            		else
+		            			if(idIc==3)
+		            			{
+		            				thumbNail.setBackgroundResource(R.drawable.expendion);
+		            			}
+		            			else
+		            				if(idIc==8)
+		            				{
+		            					thumbNail.setBackgroundResource(R.drawable.barn);
+		            				}
+		            }
+		            else
+		            {
+		            	ImageLoader imageLoader = AppController.getInstance().getImageLoader();
+		            	thumbNail.setImageUrl(negEncontrado.getThumbnailUrl(), imageLoader);
+		            }
+	  			  
 	  	          // menu
 	  			  ControlTabla ct = new ControlTabla(getActivity());
 	  			  TableLayout tablam =(TableLayout)getActivity().findViewById(R.id.lista_TablaM);

@@ -171,29 +171,40 @@
           android:padding="8dp" 
           android:orientation="vertical">
 
-          <com.android.volley.toolbox.NetworkImageView
-              android:id="@+id/vistaImg"
-              android:layout_width="80dp"
-              android:layout_height="80dp"
-              android:layout_marginRight="8dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
 
-          <TextView
-              android:id="@+id/vistaNom"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:textSize="@dimen/nombreNeg"
-              android:textStyle="bold" />
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/vistaImg"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginRight="8dp" />
 
-          <TextView
-              android:id="@+id/vistaSlog"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="1dip"
-              android:textSize="@dimen/slogan" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/vistaNom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/nombreNeg"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/vistaSlog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dip"
+                android:textSize="@dimen/slogan" />
+        </LinearLayout>
+    </LinearLayout>
 
           <TextView
               android:id="@+id/vistaDireccion"
-              android:layout_width="fill_parent"
+              android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_marginTop="5dp"
               android:textColor="@color/vista"
@@ -219,85 +230,7 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
 	    android:stretchColumns="1" >
-	 
-		    <TableRow
-		        android:id="@+id/SeparadorCabecera1"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content" >
-		 
-		        <FrameLayout
-		            android:id="@+id/LineaCabecera1"
-		            android:layout_width="fill_parent"
-		            android:layout_height="2dp"
-		            android:layout_span="3"
-		            android:background="#FFFFFF" >
-		        </FrameLayout>
-		    </TableRow>
-	    
-		    <TableRow
-		        android:id="@+id/TituloTabla1"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content" >	
-		            <TextView
-			            android:id="@+id/TituloHorario1"
-			            android:layout_width="wrap_content"
-			            android:layout_height="wrap_content"
-			            android:padding="10dp"
-			            android:text="Horario"
-			            android:textColor="#005500"
-			            android:textSize="26sp" />
-		    </TableRow>
-		    
-	        <TableRow
-		        android:id="@+id/SeparadorCabecera2"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content" >
-		 
-		        <FrameLayout
-		            android:id="@+id/LineaCabecera2"
-		            android:layout_width="fill_parent"
-		            android:layout_height="2dp"
-		            android:layout_span="3"
-		            android:background="#FFFFFF" >
-		        </FrameLayout>
-	        
-	   	 	</TableRow>
-	    
-		   <TableRow
-		        android:id="@+id/Cabecera2"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content" >
-		
-		        <TextView
-		            android:id="@+id/ColumnaDia"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:padding="15dp"
-		            android:text="Día"
-		            android:textColor="#005500"
-		            android:textSize="26sp" />
-		       
-		        <TextView
-		            android:id="@+id/ColumnaHoraA"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:layout_gravity="center_horizontal"
-		            android:padding="15dp"
-		            android:text="Hora que abre"
-		            android:textColor="#005500"
-		            android:textSize="26sp" />
-		 
-		        <TextView
-		            android:id="@+id/ColumnaHoraC"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:padding="15dp"
-		            android:text="Hora que cierra"
-		            android:textColor="#005500"
-		            android:textSize="26sp" />
-	
-		    </TableRow>
-	
+
 		</TableLayout>
   
      </LinearLayout>
